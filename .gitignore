@@ -1,12 +1,12 @@
+.vscode/
+.DS_Store
+Thumbs.db
+
 # Ignore all files inside assets/Music
 App/assets/Music/*
 
 # Keep the folder itself
 !App/assets/Music/.gitkeep
 
-# VS Code settings
-.vscode/
-
-# OS junk
-.DS_Store
-Thumbs.db
+update-music-folder.bat
+README.md
