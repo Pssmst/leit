@@ -12,8 +12,8 @@ export const line					= document.getElementById('line');
 export const spinner				= document.getElementById('spinner');
 export const shuffleButton			= document.getElementById('button-shuffle');
 export const backwardButton			= document.getElementById('button-backward');
-export const pauseButton			= document.getElementById("button-pause");
-export const playButton				= document.getElementById("button-play");
+export const pauseButton			= document.getElementById('button-pause');
+export const playButton				= document.getElementById('button-play');
 export const forwardButton			= document.getElementById('button-forward');
 export const loopButton				= document.getElementById('button-loop');
 export const elapsedDiv				= document.getElementById('elapsed');
@@ -25,3 +25,45 @@ export const volumeIndicatorButton	= document.getElementById('button-volume-indi
 export const volumeLineContainer	= document.getElementById('volume-line-container');
 export const volumeLine				= document.getElementById('volume-line');
 export const volumeSpinner			= document.getElementById('volume-spinner');
+
+
+export function newElement(
+	tag, parent, {
+		text = null,
+		id = null,
+		classes = null,
+		href = null,
+		src = null,
+		width = null,
+		height = null,
+		display = null,
+	} = {}
+) {
+	const element = document.createElement(tag);
+	// Basic attributes
+	if (id != null) element.id = id;
+	if (href != null) element.href = href;
+	if (src != null) element.src = src;
+	if (width != null) element.width = width;
+	if (height != null) element.height = height;
+	if (display != null) element.style.display = display;
+
+	// CSS classes
+	if (classes != null) {
+		for (const cls of classes) {
+			element.classList.add(cls);
+		}
+	}
+
+	// Render text as HTML (if provided)
+	if (text != null) element.innerHTML = text;
+
+	// Append to parent
+	const parentElement = parent === "body" ? document.body : document.getElementById(parent);
+
+	if (!parentElement) {
+		console.error(`newElement: no parent element with id="${parent}"`);
+		return;
+	}
+	parentElement.appendChild(element);
+}
