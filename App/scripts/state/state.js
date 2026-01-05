@@ -3,17 +3,8 @@ export const state = {
 	hoveredSong: null,
 	selectedSong: null,
 
-	album: {
-		forcedDimension: 32,
-		scale: 2.5,
-		actualDimension: null,
-		xGap: null,
-		yGap: null,
-		outlineOffset: null,
-	},
-
 	pos: {
-		canvas: {
+		mainCanvas: {
 			x: null,
 			y: null,
 			clickX: null,
@@ -29,7 +20,7 @@ export const state = {
 	},
 
 	dragging: {
-		canvas: false,
+		mainCanvas: false,
 		infoDiv: false,
 		timelineSpinner: false,
 		volumeSpinner: false,
@@ -37,13 +28,13 @@ export const state = {
 		pos: {
 			x: null,
 			y: null,
-			startX: null,
-			startY: null,
+			initialX: null,
+			initialY: null,
 		},
 	},
 
 	hovering: {
-		canvas: false,
+		mainCanvas: false,
 		infoDivLeftHitbox: false,
 		debug: false,
 
@@ -55,7 +46,7 @@ export const state = {
 	},
 
 	audio: {
-		volume: .5,
+		volume: 0,
 		lastManualVolume: null,
 		shuffle: 0,
 		looping: false,
@@ -63,11 +54,6 @@ export const state = {
 		elapsed: 0,
 		elapsedPercent: 0,
 		elapsedPercentInTime: 0,
-	},
-
-	infoDiv: {
-		width: null,
-		paddingHorizontal: null,
 	},
 	
 	structure: {
@@ -88,14 +74,19 @@ export const state = {
 		},
 	},
 
-	trackTimeline: {
-		zoom: 1,
+	mainCanvas: null,
 
-		motifPanel: {
-			motifHeight: 20,
-			compressMotifs: true,
-			scrollbarNeeded: false,
-			scrollOffset: 0,
+	trackCanvas: {
+		showWaveform: true,
+
+		frame: {
+			motifPanel: {
+				compressMotifs: true,
+				scrollbarNeeded: false,
+			},
+			timeline: {
+				zoom: 1,
+			},
 		},
 	},
 
@@ -115,11 +106,11 @@ export const state = {
 		frame: 0,
 		fps: 0,
 
+		visuals: [true, false, false, false, false, false],
+
+		lastKeyPressed: null,
 		debugLines: 0,
 		offsetDebugLines: 0,
-
-		visuals: [true, false, false, false, false],
 		structureString: '',
-		lastKeyPressed: null,
 	}
 };

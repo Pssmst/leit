@@ -1,16 +1,18 @@
 import { state }			from './state/state.js';
-import * as HTML			from './state/elements.js';
+import { layout }			from './state/layout/layout.js';
+
+import * as HTML			from './ui/elements.js';
 import * as cnv				from './canvas/canvas.js';
 import * as helpers			from './helpers.js';
 import * as motifRegistry	from './motif.js';
 import * as aud				from './audio/audio.js';
-import * as render			from './render/render.js';
-import * as textures		from './render/textures.js';
+import * as render			from './canvas/render.js';
+import * as textures		from './ui/textures.js';
 import * as init			from './init.js';
 import * as discography		from './discography.js';
 
-import { drawMainCanvas }	from './canvas/main/drawMainCanvas.js';
-import { drawTrackCanvas }	from './canvas/track/drawTrackCanvas.js';
+import { drawMainCanvas }	from './canvas/mainCanvas/drawMainCanvas.js';
+import { drawTrackCanvas }	from './canvas/trackCanvas/drawTrackCanvas.js';
 
 async function main() {
 	// Wait for images to be ready
@@ -33,8 +35,8 @@ async function main() {
 	// Return mouse position in canvas CSS-pixel coordinates
 	function toCanvasCoords(event) {
 		const canvasRect = cnv.canvas.getBoundingClientRect();
-		state.pos.canvas.x = event.clientX - canvasRect.left;
-		state.pos.canvas.y = event.clientY - canvasRect.top;
+		state.pos.mainCanvas.x = event.clientX - canvasRect.left;
+		state.pos.mainCanvas.y = event.clientY - canvasRect.top;
 
 		const trackCanvasRect = cnv.trackCanvas.getBoundingClientRect();
 		state.pos.trackCanvas.x = event.clientX - trackCanvasRect.left;
@@ -62,9 +64,9 @@ async function main() {
 	}
 
 	function setPanelWidth(n) {
-		if (n < (cnv.canvas.width / 3) - (state.infoDiv.paddingHorizontal * 2) && n > 228) {
-			state.infoDiv.width = n;
-			document.documentElement.style.setProperty("--value-info-width", `${state.infoDiv.width}px`);
+		if (n < (cnv.canvas.width / 3) - (layout.infoDiv.paddingHorizontal * 2) && n > 228) {
+			layout.infoDiv.width = n;
+			document.documentElement.style.setProperty("--value-info-width", `${layout.infoDiv.width}px`);
 		}
 	}
 
@@ -87,6 +89,9 @@ async function main() {
 				break;
 			case "Digit5":
 				state.debug.visuals[4] = !state.debug.visuals[4];
+				break;
+			case "Digit6":
+				state.debug.visuals[5] = !state.debug.visuals[5];
 				break;
 			
 			// Pause
@@ -118,15 +123,15 @@ async function main() {
 			
 			// Compress motifs 
 			case "KeyC":
-				state.trackTimeline.motifPanel.compressMotifs = !state.trackTimeline.motifPanel.compressMotifs;
+				state.trackCanvas.frame.motifPanel.compressMotifs = !state.trackCanvas.frame.motifPanel.compressMotifs;
 				break;
 			
 			// Change motif height in track timeline (not panel) 
 			case "Minus":
-				state.trackTimeline.motifPanel.motifHeight--;
+				layout.trackCanvas.frame.motifPanel.motifBox.height--;
 				break;
 			case "Equal":
-				state.trackTimeline.motifPanel.motifHeight++;
+				layout.trackCanvas.frame.motifPanel.motifBox.height++;
 				break;
 		}
 	});
@@ -138,11 +143,11 @@ async function main() {
 	});
 
 	window.addEventListener('wheel', event => {
-		if (state.hovering.canvas) { 
+		if (state.hovering.mainCanvas) { 
 			state.dragging.pos.y -= (event.deltaY / 2).toFixed(0);
 		}
-		if (state.hovering.motifPanel.self && state.trackTimeline.motifPanel.scrollbarNeeded) {
-			state.trackTimeline.motifPanel.scrollOffset -= (event.deltaY / 4).toFixed(0);
+		if (state.hovering.motifPanel.self && state.trackCanvas.frame.motifPanel.scrollbarNeeded) {
+			layout.trackCanvas.frame.motifPanel.scrollOffset -= (event.deltaY / 4).toFixed(0);
 		}
 		if (state.hovering.debug) {
 			state.debug.offsetDebugLines -= event.deltaY.toFixed(0);
@@ -153,12 +158,12 @@ async function main() {
 		toCanvasCoords(event);
 
 		// Move the camera if dragging
-		if (state.dragging.canvas) {
-			state.dragging.pos.x = state.dragging.pos.startX + state.pos.canvas.x - state.pos.canvas.clickX;
-			state.dragging.pos.y = state.dragging.pos.startY + state.pos.canvas.y - state.pos.canvas.clickY;
+		if (state.dragging.mainCanvas) {
+			state.dragging.pos.x = state.dragging.pos.initialX + state.pos.mainCanvas.x - state.pos.mainCanvas.clickX;
+			state.dragging.pos.y = state.dragging.pos.initialY + state.pos.mainCanvas.y - state.pos.mainCanvas.clickY;
 		}
 
-		state.hovering.canvas = init.determineCursorInCanvas();
+		state.hovering.mainCanvas = init.determineCursorInCanvas();
 
 		// Check hitbox
 		const newHovered = init.getSongInCollidedHitbox();
@@ -197,7 +202,7 @@ async function main() {
 		}
 
 		if (state.dragging.infoDiv) {
-			setPanelWidth(infoDivRect.right - event.clientX - state.infoDiv.paddingHorizontal * 2);
+			setPanelWidth(infoDivRect.right - event.clientX - layout.infoDiv.paddingHorizontal * 2);
 			cnv.fitTrackCanvas();
 		}
 	});
@@ -205,8 +210,8 @@ async function main() {
 	window.addEventListener('mousedown', event => {
 		// Canvas coordinates
 		toCanvasCoords(event); 
-		state.pos.canvas.clickX = state.pos.canvas.x;
-		state.pos.canvas.clickY = state.pos.canvas.y;
+		state.pos.mainCanvas.clickX = state.pos.mainCanvas.x;
+		state.pos.mainCanvas.clickY = state.pos.mainCanvas.y;
 
 		// trackCanvas coordinates
 		toCanvasCoords(event);
@@ -224,11 +229,11 @@ async function main() {
 				event.preventDefault();
 				state.dragging.infoDiv = true;
 			} 
-			else if (state.hovering.canvas && !HTML.bigCoverOverlay.classList.contains('active')) {
+			else if (state.hovering.mainCanvas && !HTML.bigCoverOverlay.classList.contains('active')) {
 				if (state.hoveredSong === null) {
-					state.dragging.canvas = true;
-					state.dragging.pos.startX = state.dragging.pos.x;
-					state.dragging.pos.startY = state.dragging.pos.y;
+					state.dragging.mainCanvas = true;
+					state.dragging.pos.initialX = state.dragging.pos.x;
+					state.dragging.pos.initialY = state.dragging.pos.y;
 				}
 				else {
 					state.selectedSong = state.hoveredSong;
@@ -244,7 +249,7 @@ async function main() {
 	window.addEventListener('mouseup', event => {
 		// Release the drag
 		if (event.button === 0) {
-			state.dragging.canvas = false;
+			state.dragging.mainCanvas = false;
 			state.dragging.infoDiv = false;
 
 			// Only applies if user is currently dragging the HTML.spinner of the timeline (so they can release anywhere on the window)

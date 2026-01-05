@@ -1,26 +1,25 @@
 import { state }			from './state/state.js';
-import * as HTML			from './state/elements.js';
+import { colors }			from './state/colors.js';
+import { layout }			from './state/layout/layout.js';
+
+import * as HTML			from './ui/elements.js';
 import * as cnv				from './canvas/canvas.js';
 import * as helpers			from './helpers.js';
 import * as motifRegistry	from './motif.js';
 import * as aud				from './audio/audio.js';
-import * as render			from './render/render.js';
-import * as textures		from './render/textures.js';
+import * as render			from './canvas/render.js';
+import * as textures		from './ui/textures.js';
 import * as discography		from './discography.js';
-
 
 // Init variables to be set in the initMain function
 export let songsDict = {};
 export let motifs;
-
 
 // Initializing width of the HTML.infoDiv's left hitbox (area around the left edge that the mouse needs to hover over to resize the HTML.infoDiv)
 export const infoDivLeftHitboxWidth = 10;
 
 // Initialize audioContext
 export const audioContext = window.audioContext || new (window.AudioContext || window.webkitAudioContext)();
-
-
 
 
 // Called at the start of main() in script.js only once
@@ -49,10 +48,10 @@ export function initMain() {
 	window.audioContext = audioContext;
 
 	// Setting album states
-	state.album.actualDimension = state.album.forcedDimension * state.album.scale;
-	state.album.xGap = state.album.forcedDimension * .4;
-	state.album.yGap = state.font.size.default * 2;
-	state.album.outlineOffset = state.album.forcedDimension / 8;
+	layout.mainCanvas.album.actualDimension = layout.mainCanvas.album.forcedDimension * layout.mainCanvas.album.scale;
+	layout.mainCanvas.album.xGap = layout.mainCanvas.album.forcedDimension * .4;
+	layout.mainCanvas.album.yGap = state.font.size.default * 2;
+	layout.mainCanvas.album.outlineOffset = layout.mainCanvas.album.forcedDimension / 8;
 
 	// Setting audio states
 	state.audio.lastManualVolume = state.audio.volume;
@@ -62,60 +61,14 @@ export function initMain() {
 	document.documentElement.style.setProperty("--value-scrollbar-width", scrollbarWidth + "px");
 
 	// Gett values of root variables `--value-info-width` and `--value-info-padding-horizontal` from style.css
-	state.infoDiv.width = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--value-info-width').trim());
-	state.infoDiv.paddingHorizontal = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--value-info-padding-horizontal').trim());
+	layout.infoDiv.width = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--value-info-width').trim());
+	layout.infoDiv.paddingHorizontal = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--value-info-padding-horizontal').trim());
 }
 
 
 
 
 ///  FUNCTIONS  //////////////////////////////////////////////////////////////////////////////////
-
-
-export function newElement(
-	tag, parent, {
-		text = null,
-		id = null,
-		classes = null,
-		href = null,
-		src = null,
-		width = null,
-		height = null,
-		display = null,
-	} = {}
-) {
-	const element = document.createElement(tag);
-	// Basic attributes
-	if (id != null) element.id = id;
-	if (href != null) element.href = href;
-	if (src != null) element.src = src;
-	if (width != null) element.width = width;
-	if (height != null) element.height = height;
-	if (display != null) element.style.display = display;
-
-	// CSS classes
-	if (classes != null) {
-		for (const cls of classes) {
-			element.classList.add(cls);
-		}
-	}
-
-	// Render text as HTML (if provided)
-	if (text != null) element.innerHTML = text;
-
-	// Append to parent
-	const parentElement = parent === "body" ? document.body : document.getElementById(parent);
-
-	if (!parentElement) {
-		console.error(`newElement: no parent element with id="${parent}"`);
-		return;
-	}
-	parentElement.appendChild(element);
-}
-
-
-
-
 
 
 // Load audio only if the time threshold allows
@@ -153,12 +106,12 @@ export function determineCursorInCanvas() {
 	const timelineRect = HTML.timelineDiv.getBoundingClientRect();
 
 	// Is the point inside the canvas (CSS pixels)?
-	state.hovering.canvas = (state.pos.canvas.x >= 0 && state.pos.canvas.x <= canvasRect.width && state.pos.canvas.y >= 0 && state.pos.canvas.y <= canvasRect.height);
-	if (!state.hovering.canvas) return false;
+	state.hovering.mainCanvas = (state.pos.mainCanvas.x >= 0 && state.pos.mainCanvas.x <= canvasRect.width && state.pos.mainCanvas.y >= 0 && state.pos.mainCanvas.y <= canvasRect.height);
+	if (!state.hovering.mainCanvas) return false;
 
 	// Convert the canvas-local CSS point to page coordinates for overlap tests
-	const pageX = canvasRect.left + state.pos.canvas.x;
-	const pageY = canvasRect.top + state.pos.canvas.y;
+	const pageX = canvasRect.left + state.pos.mainCanvas.x;
+	const pageY = canvasRect.top + state.pos.mainCanvas.y;
 
 	const in_info = (pageX >= infoRect.left && pageX <= infoRect.right && pageY >= infoRect.top && pageY <= infoRect.bottom);
 	const in_timeline = (pageX >= timelineRect.left && pageX <= timelineRect.right && pageY >= timelineRect.top && pageY <= timelineRect.bottom);
@@ -172,7 +125,7 @@ export function getSongInCollidedHitbox() {
 	for (const song of Object.values(songsDict)) {
 		const w = song.cover.projectedWidth;
 		const h = song.cover.projectedHeight || w;
-		if (state.pos.canvas.x >= song.x && state.pos.canvas.x <= song.x + w && state.pos.canvas.y >= song.y && state.pos.canvas.y <= song.y + h) {
+		if (state.pos.mainCanvas.x >= song.x && state.pos.mainCanvas.x <= song.x + w && state.pos.mainCanvas.y >= song.y && state.pos.mainCanvas.y <= song.y + h) {
 			return song;
 		}
 	}
@@ -304,7 +257,7 @@ export async function initSong(song) {
 	HTML.pauseButton.style.display = "inline-grid";
 	HTML.playButton.style.display = "none";
 
-	state.trackTimeline.motifPanel.scrollOffset = 0;
+	layout.trackCanvas.frame.motifPanel.scrollOffset = 0;
 
 	try {
 		const res = await aud.playMusic(song.songPath, state.audio.volume, state.audio.looping);
@@ -321,12 +274,12 @@ export async function initSong(song) {
 		// CREATE INFO ELEMENTS DYNAMICALLY /////////////////////////////////
 
 		// Cover
-		newElement('img', 'info', { id: 'info-cover', classes: ['cover'], src: song.cover.src, display: 'block' });
+		HTML.newElement('img', 'info', { id: 'info-cover', classes: ['cover'], src: song.cover.src, display: 'block' });
 		const infoCover = document.getElementById('info-cover');
 
 		// Log the top 2 colors for this cover
 		try {
-			const topColors = await helpers.getTopColorsFromSrc(song.cover.src, { maxSize: 200, colorBits: 4, count: 3 });
+			const topColors = await helpers.getColorsFromImage(song.cover.src, { maxSize: 200, colorBits: 4, count: 3 });
 			song.colors = topColors;
 
 			// CONSTRUCT GRADIENT
@@ -362,9 +315,9 @@ export async function initSong(song) {
 		});
 
 		// Name and short description
-		newElement('div', 'info', { id: 'info-title', classes: ['info-highlight'] });
-		newElement('h2', 'info-title', { id: 'info-header', text: song.preferredName });
-		if (song.shortDescription != ``) newElement('p', 'info-title', { id: 'info-shortDescription', text: song.shortDescription });
+		HTML.newElement('div', 'info', { id: 'info-title', classes: ['info-highlight'] });
+		HTML.newElement('h2', 'info-title', { id: 'info-header', text: song.preferredName });
+		if (song.shortDescription != ``) HTML.newElement('p', 'info-title', { id: 'info-shortDescription', text: song.shortDescription });
 
 
 		///  DETAILS  ////////////////////////
@@ -382,15 +335,15 @@ export async function initSong(song) {
 		};
 
 		if (detailMenu.longDescription.exists || detailMenu.motifs.exists || detailMenu.details.exists) {
-			newElement('div', 'info', { id: 'detail-container', classes: ['info-highlight', 'dark'] });
-			newElement('div', 'detail-container', { id: 'detail-menu' });
-			newElement('div', 'detail-container', { id: 'detail-contents' });
+			HTML.newElement('div', 'info', { id: 'detail-container', classes: ['info-highlight', 'dark'] });
+			HTML.newElement('div', 'detail-container', { id: 'detail-menu' });
+			HTML.newElement('div', 'detail-container', { id: 'detail-contents' });
 		}
 		
 		// Long description
 		if (detailMenu.longDescription.exists) {
-			newElement('button', 'detail-menu', { id: 'detail-menu-longDescription', classes: ['detail-menu-item'], text: (detailMenu.motifs.exists ? 'Desc' : 'Description') });
-			newElement('div', 'detail-contents', { id: 'detail-contents-longDescription', classes: ['detail-contents-item'] });
+			HTML.newElement('button', 'detail-menu', { id: 'detail-menu-longDescription', classes: ['detail-menu-item'], text: (detailMenu.motifs.exists ? 'Desc' : 'Description') });
+			HTML.newElement('div', 'detail-contents', { id: 'detail-contents-longDescription', classes: ['detail-contents-item'] });
 			detailMenu.longDescription.button = document.getElementById('detail-menu-longDescription');
 
 			// Add the `time` class only to links that are NOT marked with the `non-time` class
@@ -433,8 +386,8 @@ export async function initSong(song) {
 
 		// Motifs
 		if (detailMenu.motifs.exists) {
-			newElement('button', 'detail-menu', { id: 'detail-menu-motifs', classes: ['detail-menu-item'], text: "Motifs" });
-			newElement('div', 'detail-contents', { id: 'detail-contents-motifs', classes: ['detail-contents-item'] });
+			HTML.newElement('button', 'detail-menu', { id: 'detail-menu-motifs', classes: ['detail-menu-item'], text: "Motifs" });
+			HTML.newElement('div', 'detail-contents', { id: 'detail-contents-motifs', classes: ['detail-contents-item'] });
 			detailMenu.motifs.button = document.getElementById('detail-menu-motifs');
 
 			for (const motif of song.motifs) {
@@ -445,18 +398,18 @@ export async function initSong(song) {
 		}
 
 		// Details
-		newElement('button', 'detail-menu', { id: 'detail-menu-details', classes: ['detail-menu-item'], text: "Details" });
-		newElement('div', 'detail-contents', { id: 'detail-contents-details', classes: ['detail-contents-item'] });
+		HTML.newElement('button', 'detail-menu', { id: 'detail-menu-details', classes: ['detail-menu-item'], text: "Details" });
+		HTML.newElement('div', 'detail-contents', { id: 'detail-contents-details', classes: ['detail-contents-item'] });
 		detailMenu.details.button = document.getElementById('detail-menu-details');
 
 		if (song.daw) {
-			newElement('p', 'detail-contents-details', { text: `DAW: ${song.daw}` })
+			HTML.newElement('p', 'detail-contents-details', { text: `DAW: ${song.daw}` })
 		}
 		if (song.date) {
-			newElement('p', 'detail-contents-details', { text: `Date created: ${song.date}` })
+			HTML.newElement('p', 'detail-contents-details', { text: `Date created: ${song.date}` })
 		}
 		if (song.alternativeNames.length > 0) {
-			newElement('p', 'detail-contents-details', { text: `Alternative names: ${song.alternativeNames}` })
+			HTML.newElement('p', 'detail-contents-details', { text: `Alternative names: ${song.alternativeNames}` })
 		}
 
 		// Hide all contents at first
@@ -500,29 +453,29 @@ export async function initSong(song) {
 		// CREATE BOTTOM ELEMENTS DYNAMICALLY /////////////////////////////////
 
 		// Timeline 1 (Cover) and Timeline 2
-		newElement('img', 'timeline-left', { id: 'timeline-left-1', classes: ['cover'], src: song.cover.src, display: 'block' });
-		newElement('div', 'timeline-left', { id: 'timeline-left-2' });
+		HTML.newElement('img', 'timeline-left', { id: 'timeline-left-1', classes: ['cover'], src: song.cover.src, display: 'block' });
+		HTML.newElement('div', 'timeline-left', { id: 'timeline-left-2' });
 
 		// Name
-		newElement('p', 'timeline-left-2', { id: 'timeline-left-title', text: song.preferredName });
+		HTML.newElement('p', 'timeline-left-2', { id: 'timeline-left-title', text: song.preferredName });
 
 		// Album
-		newElement('div', 'timeline-left-2', { id: 'album' });
-		newElement('i', 'album', { classes: ['fa-solid', 'fa-music', 'timeline-left-icon'] });
-		newElement('p', 'album', { text: `${song.album} (#${song.id[0]})` });
+		HTML.newElement('div', 'timeline-left-2', { id: 'album' });
+		HTML.newElement('i', 'album', { classes: ['fa-solid', 'fa-music', 'timeline-left-icon'] });
+		HTML.newElement('p', 'album', { text: `${song.album} (#${song.id[0]})` });
 
 		// Disc
 		if (getAlbum(song.album).discs.length > 1) { // Has more than 1 disc
-			newElement('div', 'timeline-left-2', { id: 'disc' });
-			newElement('i', 'disc', { classes: ['fa-solid', 'fa-compact-disc', 'timeline-left-icon'] });
-			newElement('p', 'disc', { text: `Disc ${song.discID}` });
+			HTML.newElement('div', 'timeline-left-2', { id: 'disc' });
+			HTML.newElement('i', 'disc', { classes: ['fa-solid', 'fa-compact-disc', 'timeline-left-icon'] });
+			HTML.newElement('p', 'disc', { text: `Disc ${song.discID}` });
 		}
 
 		// Calendar
 		if (song.date) {
-			newElement('div', 'timeline-left-2', { id: 'date' });
-			newElement('i', 'date', { classes: ['fa-regular', 'fa-calendar', 'timeline-left-icon'] });
-			newElement('p', 'date', { text: `Released ${song.date}` });
+			HTML.newElement('div', 'timeline-left-2', { id: 'date' });
+			HTML.newElement('i', 'date', { classes: ['fa-regular', 'fa-calendar', 'timeline-left-icon'] });
+			HTML.newElement('p', 'date', { text: `Released ${song.date}` });
 		}
 	}
 	catch (error) {
