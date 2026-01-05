@@ -98,7 +98,7 @@ export function scrambleMotifColors(motifs) {
 		const cb = helpers.getContrast(bgRGB, [0, 0, 0]) * .3; // Weighted bc I prefer having white text
 	
 		// Pick whichever has better contrast
-		const color_raw_motifBoxTextDark = helpers.convertColor('hsv', 'rgb', [ motif.rawHSV.h, motif.rawHSV.s, motif.rawHSV.v*.2 ]);
+		const color_raw_motifBoxTextDark = helpers.convertColor('hsv', 'rgb', [ motif.rawHSV.h, motif.rawHSV.s, motif.rawHSV.v * 0.2 ]);
 		motif.colors.text = (cw >= cb ? colors.white : `rgb(${color_raw_motifBoxTextDark[0]},${color_raw_motifBoxTextDark[1]},${color_raw_motifBoxTextDark[2]})`);
 	}
 }

@@ -1,11 +1,10 @@
 import { state }	from './state/state.js';
 import * as cnv	 from './canvas/canvas.js';
-import * as r	   from './render/render.js';
-
-const leadingZeroFormatter = new Intl.NumberFormat(undefined, { minimumIntegerDigits: 2 });
+import * as r	   from './canvas/render.js';
 
 // Coverts seconds to "##:##:##"
 export function secondsToTimestamp(time) {
+	const leadingZeroFormatter = new Intl.NumberFormat(undefined, { minimumIntegerDigits: 2 });
 	const seconds = Math.floor(time % 60);
 	const minutes = Math.floor(time / 60) % 60;
 	const hours = Math.floor(time / 3600);
@@ -16,6 +15,7 @@ export function secondsToTimestamp(time) {
 	}
 }
 
+// Gets a random integer between min and max, inclusive
 export function randInt(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
@@ -42,11 +42,11 @@ export function timestampToSeconds(timeStr) {
 }
 
 // Get dominant colors of an image
-export async function getTopColorsFromSrc(src, opts = {}) {
+export async function getColorsFromImage(src, opts = {}) {
 	const cfg = {
-		maxSize: opts.maxSize || 300,	   // Shrink large images for speed
-		colorBits: opts.colorBits || 4,	 // Quantization bits per channel
-		sampleStep: opts.sampleStep || 1,   // Sample every Nth pixel
+		maxSize: opts.maxSize || 300,		// Shrink large images for speed
+		colorBits: opts.colorBits || 4,		// Quantization bits per channel
+		sampleStep: opts.sampleStep || 1,	// Sample every Nth pixel
 		count: opts.count || 2
 	};
 
@@ -83,7 +83,7 @@ export async function getTopColorsFromSrc(src, opts = {}) {
 		for (let x = 0; x < w; x += cfg.sampleStep) {
 			const i = (y * w + x) * 4;
 			const a = data[i + 3];
-			if (a === 0) continue; // ignore fully transparent
+			if (a === 0) continue; // Ignore fully transparent
 			const r = data[i] >> shift;
 			const g = data[i + 1] >> shift;
 			const b = data[i + 2] >> shift;
@@ -117,7 +117,7 @@ export async function getTopColorsFromSrc(src, opts = {}) {
 	function rgbToHex(r, g, b) {
 		return '#' + compToHex(r) + compToHex(g) + compToHex(b);
 	}
-	// perceived luminance (sRGB, Rec. 709 weights)
+	// Perceived luminance (sRGB, Rec. 709 weights)
 	function brightnessOf(r, g, b) {
 		return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 	}
@@ -145,7 +145,6 @@ export async function getTopColorsFromSrc(src, opts = {}) {
 
 	// SORT THE TOP COLORS BY BRIGHTNESS (brightest first)
 	top.sort((b,a) => b.brightness - a.brightness);
-
 	return top;
 }
 
@@ -347,10 +346,4 @@ export function truncateString(string, maxWidth) {
 		}
 	}
 	return string;
-}
-
-
-// Turns 123.456 into 0.456
-export function reverseTruncate(n) {
-	return 1 % n;
 }

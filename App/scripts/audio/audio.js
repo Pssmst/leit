@@ -1,4 +1,5 @@
 import * as init from '../init.js';
+import { state } from '../state/state.js';
 
 export const MAX_CACHE_SIZE = 16;
 export const audioCache = new Map();		// path -> Promise<AudioBuffer>
@@ -14,7 +15,7 @@ export let startedAt = 0;				   // init.audioContext.currentTime when playback s
 export let pausedAt = 0;					// Seconds into the track when paused
 export let isPaused = false;
 
-export let lastVolume = 0.5;
+export let lastVolume = state.audio.lastManualVolume;
 export let lastLoop = false;
 
 // AUDIO CACHE CLOCK

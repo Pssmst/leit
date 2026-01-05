@@ -1,6 +1,5 @@
 export const colors = {
 	default:				'hsla(0, 0%, 100%, 1.00)',
-
 	white:					'hsla(0, 0%, 100%, 1.00)',
 	transparent:			'hsla(0, 0%, 100%, 0)',
 
@@ -15,7 +14,7 @@ export const colors = {
 		defaultHighlight:	'hsla(200, 7%, 45%, 1.00)',
 	},
 
-	track: {
+	trackCanvas: {
 		primary:			'hsla(120, 100%, 60%, 1.00)',
 
 		waveform: {
@@ -27,7 +26,7 @@ export const colors = {
 			bg:				'hsla(0, 0%, 0%, 1.00)',
 		},
 
-		panel: {
+		motifPanel: {
 			scrollbar: {
 				fg:			'hsla(200, 7%, 45%, 1.00)',
 				bg:			'hsla(200, 9%, 13%, 1.00)',
@@ -41,7 +40,7 @@ export const colors = {
 
 			measureBar: {
 				text:		'hsla(0, 0%, 100%, 1.00)',
-				shadow:		'hsla(205, 23%, 34%, 0.40)',
+				shadow:		'hsla(206, 23%, 34%, 0.40)',
 				bg:			'hsla(214, 15%, 9%, 1.00)',
 			},
 
@@ -57,8 +56,9 @@ export const colors = {
 		visual1:			'hsla(0, 0%, 100%, 1.00)',
 		visual2:			'hsla(0, 0%, 100%, 1.00)',
 		visual3:			'hsla(0, 0%, 100%, 1.00)',
-		visual4:			'hsla(92, 100%, 50%, 1.00)',
-		visual5:			'hsla(60, 100%, 50%, 1.00)',
+		visual4:			'hsla(0, 0%, 100%, 1.00)',
+		visual5:			'hsla(92, 100%, 50%, 1.00)',
+		visual6:			'hsla(60, 100%, 50%, 1.00)',
 
 		loadedAudio: {
 			border:			'hsla(0, 0%, 0%, 1.00)',

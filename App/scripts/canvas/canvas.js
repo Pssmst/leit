@@ -1,4 +1,4 @@
-export const canvas = document.getElementById('canvas');
+export const canvas = document.getElementById('main-canvas');
 export const ctx = canvas.getContext('2d');
 canvas.addEventListener('contextmenu', e => e.preventDefault());
 
