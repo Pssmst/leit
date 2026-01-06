@@ -1,6 +1,7 @@
 import { state }	from './state/state.js';
-import * as cnv	 from './canvas/canvas.js';
-import * as r	   from './canvas/render.js';
+import { colors }	from './state/colors.js';
+import * as cnv		from './canvas/canvas.js';
+import * as render	from './canvas/render.js';
 
 // Coverts seconds to "##:##:##"
 export function secondsToTimestamp(time) {
@@ -330,20 +331,68 @@ export function getContrast(rgb1, rgb2) {
 
 
 // Do complicated stuff to shorten string if too long
-export function truncateString(string, maxWidth) {
-	const stringWidth = r.getTextWidth(cnv.ctx, string);
+export function truncateString(ctx, string, maxWidth, font = state.font.default, fontSize = state.font.size.default, scaleX = 1) {
+	const scaledWidth = (s) => render.getTextWidth(ctx, s, font, fontSize) * scaleX;
 
-	if (stringWidth > maxWidth) {
-		let maxLen = string.length;
-		while (maxLen > 0 && r.getTextWidth(cnv.ctx, string.substring(0, maxLen) + '…') > maxWidth) {
-			maxLen--;
-		}
-		// If there's a space between the name and the ...
-		if (string.substring(maxLen-1, maxLen) === ' ') { 
-			string = string.substring(0, maxLen-1) + '…';
-		} else {
-			string = string.substring(0, maxLen) + '…';
-		}
+	// Draw nothing if just ellipses don't fit
+	if (scaledWidth('…') > maxWidth) {
+		return '';
 	}
-	return string;
+
+	if (scaledWidth(string) <= maxWidth) {
+		return string;
+	}
+
+	let maxLen = string.length;
+
+	while (
+		maxLen > 0 &&
+		scaledWidth(string.substring(0, maxLen) + '…') > maxWidth
+	) {
+		maxLen--;
+	}
+
+	// Trim trailing space before ellipsis
+	if (string.substring(maxLen - 1, maxLen) === ' ') {
+		return string.substring(0, maxLen - 1) + '…';
+	}
+
+	return string.substring(0, maxLen) + '…';
+}
+
+// truncateString 2: Trunc Harder (Now with added squishing)
+export function advancedTruncateString(ctx, string, maxWidth, {
+	minScaleX = 1, maxScaleX = 1,
+	minScaleY = 1, maxScaleY = 1,
+	maxHeight = null,
+	paddingX = 0,
+	font = state.font.default, fontSize = state.font.size.default } = {}
+) {
+	// Vertical
+	if (maxHeight === null) { maxHeight = fontSize; }
+	const verticalOverflow = maxHeight / fontSize;
+	const scaleY = Math.min(maxScaleY, Math.max(minScaleY, verticalOverflow));
+	const scaledFontSize = fontSize * scaleY;
+
+	// Horizontal
+	const availableWidth = maxWidth - paddingX * 2;
+	const stringWidth = render.getTextWidth(ctx, string, font, scaledFontSize);
+
+	// Expand up to 1, squish down to limit
+	const horizontalOverflow = availableWidth / stringWidth;
+	const scaleX = Math.min(maxScaleX, Math.max(minScaleX, horizontalOverflow));
+
+	// Truncate if still too wide
+	let outputString = string;
+	if (scaleX === minScaleX && stringWidth * scaleX > availableWidth) {
+		outputString = truncateString(ctx, string, availableWidth, font, scaledFontSize, scaleX);
+	}
+
+	// Return necessary values
+	return {
+		string: outputString,
+		font,
+		fontSize: scaledFontSize,
+		scaleX
+	};
 }

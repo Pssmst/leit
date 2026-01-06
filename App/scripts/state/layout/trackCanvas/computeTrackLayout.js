@@ -30,10 +30,6 @@ export function computeTrackLayout(canvasWidth, canvasHeight) {
 	
 	layout.trackCanvas.frame.timeline.width		= layout.trackCanvas.frame.timeline.right - layout.trackCanvas.frame.timeline.playerX;
 	layout.trackCanvas.frame.timeline.height	= layout.trackCanvas.frame.timeline.bottom - layout.trackCanvas.frame.timeline.top;
-
-	// Player
-
-	layout.trackCanvas.frame.timeline.playerX = layout.trackCanvas.frame.timeline.left + layout.trackCanvas.frame.padding + layout.trackCanvas.frame.motifPanel.width
 	
 	// Measure Bar
 
@@ -44,6 +40,10 @@ export function computeTrackLayout(canvasWidth, canvasHeight) {
 
 	layout.trackCanvas.frame.timeline.measureBar.height			= layout.trackCanvas.frame.timeline.measureBar.number.height + layout.trackCanvas.frame.timeline.measureBar.timeSig.height;
 	layout.trackCanvas.frame.timeline.measureBar.bottom			= layout.trackCanvas.frame.timeline.top + layout.trackCanvas.frame.timeline.measureBar.height;
+	
+	// Player
+
+	layout.trackCanvas.frame.timeline.playerX = layout.trackCanvas.frame.timeline.left + layout.trackCanvas.frame.padding + layout.trackCanvas.frame.motifPanel.width
 	
 	// Motif Panel
 

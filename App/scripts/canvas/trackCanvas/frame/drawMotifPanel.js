@@ -93,8 +93,28 @@ export function drawMotifPanel() {
 			});
 		}
 
-		const motifDisplayName = helpers.truncateString(motif.name, motif.width);
-		render.drawText(cnv.trackCtx, motifDisplayName, { x: motif.panelX + layout.trackCanvas.frame.motifPanel.motifOffset, y: motif.panelY + layout.trackCanvas.frame.motifPanel.motifOffset, fontSize: state.font.size.default, color: motif.colors.text });
+		const advancedTruncatedString = helpers.advancedTruncateString(
+			cnv.trackCtx,
+			motif.name,
+			motif.width,
+			{
+				minScaleX: 0.6,
+				minScaleY: 0.5,
+				maxHeight: motif.height,
+				font: state.font.default,
+				fontSize: state.font.size.default,
+				paddingX: 6,
+			}
+
+		);
+		
+		render.drawText(cnv.trackCtx, advancedTruncatedString.string, {
+			fontSize: advancedTruncatedString.fontSize,
+			x: motif.panelX + layout.trackCanvas.frame.motifPanel.motifOffset,
+			y: motif.panelY + layout.trackCanvas.frame.motifPanel.motifOffset,
+			color: motif.colors.text,
+			scaleX: advancedTruncatedString.scaleX,
+		});
 		
 		layout.trackCanvas.frame.motifPanel.motifY += state.font.size.default + layout.trackCanvas.frame.motifPanel.motifOffset*3;
 	}

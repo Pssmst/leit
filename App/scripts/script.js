@@ -128,10 +128,10 @@ async function main() {
 			
 			// Change motif height in track timeline (not panel) 
 			case "Minus":
-				layout.trackCanvas.frame.motifPanel.motifBox.height--;
+				layout.trackCanvas.frame.timeline.motifHeight--;
 				break;
 			case "Equal":
-				layout.trackCanvas.frame.motifPanel.motifBox.height++;
+				layout.trackCanvas.frame.timeline.motifHeight++;
 				break;
 		}
 	});

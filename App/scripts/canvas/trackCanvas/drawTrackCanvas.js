@@ -8,7 +8,7 @@ import { drawFrame }			from './frame/drawFrame.js';
 
 
 export function drawTrackCanvas() {
-	if (!cnv.trackCtx || !cnv.trackCanvas || !state.selectedSong || state.loading) return;
+	if (!cnv.trackCtx || !cnv.trackCanvas || !state.selectedSong) return;
 
 	// Use CSS pixel size (drawing coordinates are in CSS pixels because state.font.setTransform was used)
 	const rect = cnv.trackCanvas.getBoundingClientRect();
@@ -17,6 +17,8 @@ export function drawTrackCanvas() {
 
 	// Clear the visible drawing area (in CSS pixels)
 	cnv.trackCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+	if (state.loading) return;
 
 	computeTrackLayout(canvasWidth, canvasHeight);
 

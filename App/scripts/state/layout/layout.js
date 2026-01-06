@@ -32,7 +32,7 @@ export const layout = {
 				scrollOffset: 0,
 
 				motifBox: {
-					height: 20,
+					// width
 				},
 
 				scrollbar: {
@@ -52,6 +52,8 @@ export const layout = {
 						// top
 					}
 				},
+
+				motifHeight: 20,
 			},
 		},
 	}

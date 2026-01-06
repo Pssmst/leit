@@ -79,7 +79,7 @@ export function drawMainCanvas() {
 					}
 				}
 				
-				let nameStr = helpers.truncateString(song.preferredName, song.cover.projectedWidth);
+				let nameStr = helpers.truncateString(cnv.ctx, song.preferredName, song.cover.projectedWidth);
 
 				render.drawText(cnv.ctx, nameStr, { x: xOffset + state.dragging.pos.x + (song.cover.projectedWidth - render.getTextWidth(cnv.ctx, nameStr)) / 2, y: yOffset + state.dragging.pos.y - state.font.size.default * 1.4 });
 				xOffset += (song.cover.projectedWidth + layout.mainCanvas.album.xGap);

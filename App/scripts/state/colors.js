@@ -69,6 +69,7 @@ export const colors = {
 		hitboxes: {
 			self:			'hsla(0, 0%, 100%, 1.00)',
 			unallowed:		'hsla(0, 100%, 50%, 1.00)',
+			text:			'hsla(59, 100%, 50%, 1.00)',
 		}
 	},
 };

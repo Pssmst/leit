@@ -123,9 +123,9 @@ export function drawTimeline() {
 		///  MEASURE NUMBER  //////////////////////////////////////////////////////////////////
 		
 		const measureText = `${measure}`;
-		const rawTextWidth = render.getTextWidth(cnv.trackCtx, measureText);
+		const labelWidth = render.getTextWidth(cnv.trackCtx, measureText);
 		const measureScaleX = drawConfig.measureNumber.scaleX;
-		const drawTextWidth = rawTextWidth * measureScaleX; // If render.getTextWidth already accounts for scale, remove the * measureScaleX
+		const drawTextWidth = labelWidth * measureScaleX; // If render.getTextWidth already accounts for scale, remove the * measureScaleX
 
 		if (canDraw('measureNumber', ttCurrentDrawnX, drawTextWidth)) {
 			render.drawText(cnv.trackCtx, measureText, { x: ttCurrentDrawnX, y: layout.trackCanvas.frame.timeline.measureBar.number.top, scaleX: measureScaleX, color: colors.trackCanvas.timeline.text });
@@ -226,7 +226,7 @@ export function drawTimeline() {
 			// Assign Y only the first time this motif is seen
 			if (!ttMotifYMap.has(motifObj)) {
 				ttMotifYMap.set(motifObj, ttMotifY);
-				ttMotifY += layout.trackCanvas.frame.motifPanel.motifBox.height;
+				ttMotifY += layout.trackCanvas.frame.timeline.motifHeight;
 			}
 
 			const y = ttMotifYMap.get(motifObj);
@@ -238,12 +238,44 @@ export function drawTimeline() {
 			const right = measureToX(endMeasure);
 			const ttMotifWidth = right - left;
 
-			// Draw the motif block
-			render.drawRect(cnv.trackCtx, left, y, ttMotifWidth, layout.trackCanvas.frame.motifPanel.motifBox.height, motifObj.colors.color);
 
-			// Draw the label
-			const tcMotifDataDisplayName = helpers.truncateString(tcMotifData[2], ttMotifWidth - 2);
-			render.drawText(cnv.trackCtx, tcMotifDataDisplayName, { x: left + 2, y: y + (layout.trackCanvas.frame.motifPanel.motifBox.height - state.font.size.default) / 2, fontSize: state.font.size.default, color: motifObj.colors.text });
+			///   RENDER MOTIF BOX (Highlight on hover)   ////////////////////
+
+			if (state.pos.trackCanvas.x >= left && state.pos.trackCanvas.x <= right && state.pos.trackCanvas.y >= y && state.pos.trackCanvas.y <= y + layout.trackCanvas.frame.timeline.motifHeight) {
+				cnv.trackCanvas.style.cursor = 'pointer';
+				render.drawRect(cnv.trackCtx, left, y, ttMotifWidth, layout.trackCanvas.frame.timeline.motifHeight, motifObj.colors.color, {
+					shadow: { inner: true, shadowColor: motifObj.colors.highlight, shadowBlur: layout.trackCanvas.frame.timeline.motifHeight, left: false, right: false, top: false }
+				});
+				render.drawBorder(cnv.trackCtx, left+1, y+1, ttMotifWidth-2, layout.trackCanvas.frame.timeline.motifHeight-2, motifObj.colors.highlight);
+			}
+			else {
+				render.drawRect(cnv.trackCtx, left, y, ttMotifWidth, layout.trackCanvas.frame.timeline.motifHeight, motifObj.colors.color);
+			}
+
+			///   LABEL   ////////////////////////////////////////////////////
+
+			const advancedTruncatedString = helpers.advancedTruncateString(
+				cnv.trackCtx,
+				tcMotifData[2],
+				ttMotifWidth,
+				{
+					minScaleX: 0.6,
+					minScaleY: 0.5,
+					maxHeight: layout.trackCanvas.frame.timeline.motifHeight,
+					font: state.font.default,
+					fontSize: state.font.size.default,
+					paddingX: 4,
+				}
+
+			);
+
+			render.drawText(cnv.trackCtx, advancedTruncatedString.string, {
+				fontSize: advancedTruncatedString.fontSize,
+				x: left + 2,
+				y: y + (layout.trackCanvas.frame.timeline.motifHeight - advancedTruncatedString.fontSize) / 2,
+				color: motifObj.colors.text,
+				scaleX: advancedTruncatedString.scaleX,
+			});
 		}
 	}
 
