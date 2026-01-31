@@ -41,6 +41,11 @@ export const layout = {
 			},
 
 			timeline: {
+				// left
+				// right
+				// top
+				// bottom
+
 				measureBar: {
 					number: {
 						height: 20,

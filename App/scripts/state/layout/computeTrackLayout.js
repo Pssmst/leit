@@ -1,5 +1,5 @@
-import { state }	from '../../state.js';
-import { layout }	from '../layout.js';
+import { state }	from '../state.js';
+import { layout }	from './layout.js';
 
 export function computeTrackLayout(canvasWidth, canvasHeight) {
 
@@ -52,5 +52,4 @@ export function computeTrackLayout(canvasWidth, canvasHeight) {
 
 	layout.trackCanvas.frame.motifPanel.scrollbar.left	= layout.trackCanvas.frame.motifPanel.right - layout.trackCanvas.frame.motifPanel.scrollbar.width;
 	layout.trackCanvas.frame.motifPanel.motifBox.width	= layout.trackCanvas.frame.motifPanel.width - layout.trackCanvas.frame.motifPanel.motifOffset * 2;
-	layout.trackCanvas.frame.motifPanel.motifY			= layout.trackCanvas.frame.timeline.top + layout.trackCanvas.frame.motifPanel.motifOffset;
 }

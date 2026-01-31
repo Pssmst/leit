@@ -72,7 +72,7 @@ export const textures = {
 	cover_Old_Chowder_Collection:	`../App/assets/textures/covers/Additional Covers/Old Chowder Collection.jpg`,
 	cover_Long_Overdue:				`../App/assets/textures/covers/Additional Covers/Long Overdue.jpg`,
 	cover_Old_TDCC_Disc_3b:			`../App/assets/textures/covers/Additional Covers/Old TDCC Disc 3b.jpg`,
-	cover_Sunspots:					`../App/assets/textures/covers/Additional Covers/Sunspots.jpg`,
+	cover_Sol:						`../App/assets/textures/covers/Additional Covers/Sol.jpg`,
 };
 
 export const T = {};

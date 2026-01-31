@@ -38,10 +38,19 @@ export const state = {
 		infoDivLeftHitbox: false,
 		debug: false,
 
+		motif: {
+			index: null,
+			obj: null,
+			flag: false,
+		},
+
 		motifPanel: {
 			self: false,
-			motif: false,
 			scrollbar: false,
+		},
+
+		timeline: {
+			self: false,
 		},
 	},
 

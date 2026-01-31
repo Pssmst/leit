@@ -190,7 +190,10 @@ export const albums = [
 				daw: `CML`, date: `4/27/2019`,
 				shortDescription: `First banger`,
 				longDescription: `I was very proud of this one, but I did not understand why. Now that I am older, I know that it was because I accidentally discovered the magic of a musical "pickup," where the song starts before the first measure.`,
-				structure: [[1, { bpm: 120, timeSignature: [4,4] }], ],
+				structure: [
+					[1, { bpm: 120, timeSignature: [1,4] }],
+					[2, { bpm: 120, timeSignature: [4,4] }],
+				],
 				motifs: [],
 			}),
 		]),
@@ -217,7 +220,7 @@ export const albums = [
 			new Song(`Cynthia's Theme`, {
 				daw: `GB`, date: ``,
 				shortDescription: `A curious woman`,
-				longDescription: `This song has almost no real relation to Cynthia, other than the fact that it's a somber piano piece.\n[Taken from MultiJumper Character Overview]\nCynthia Davis is a young and imaginative girl who lives with the dying population of humans remaining on Mars. She is the daughter of the king, and is soon to be declared queen. She looks up a lot to her father, and aims to be just like him, though is silently plagued by anxiety and fear. Her themes are piano-based, as that is the instrument she is most familiar with. The second theme inflicts a rising anxiety within the listener, reflecting what it is like to be her.\nTheme 1: "Little Goth" by Lena Raine. Theme 2: "Anxiety" by Lena Raine. Extra Theme: "Moonsetter" by Toby Fox.\n[Modern description starts here]\nCynthia suffered the same naming convention as David Andrews. I had this wonderful idea to create a love story between David and an alternate universe version of himself (I was quite disappointed when I learned that a few years later, the Loki series would end up doing the exact same thing). I had never seen this idea before and truly thought I was the first person to come up with it. Since David was named David Branson at the time, Cynthia's name was Briana Davis, which is an even worse genderbent version of my name. I'm not sure when I decided to change her name to Cynthia, but for some reason the name just stood out to me. I probably changed her name after my sixth grade class had learned that I was making a genderbent OC of myself. I remember Destin teasing me about it.\nAccording to my shoddy worldbuilding, Cynthia was born on Earth into British loyalty (yes, she was British) as the daughter of the King, who at some point had a name but I don't remember it. The King was so loving and powerful that he had united every country as one, and the British monarchy became the monarchy of Earth. He was also a genius, and as "King of Earth," he enacted numerous laws that prioritized the grand pursuit of science. His wife, the queen (who literally is not mentioned anywhere in MultiJumper), gave birth to Cynthia ten years into his reign. Since there's no mention of a queen anywhere in MultiJumper, I can only imagine that she died during childbirth.\nCynthia was not the King's most cherished possession, however. When Cynthia was born, the King was finishing his plans to construct a machine that could achieve 'faster-than-light' travel. The plan was to utilize black hole's distortion of space-time to continuously propel the ship forwards. Little did 11 year old me know, this was actually the very same concept as the infamous <a class='non-time' href='https://en.wikipedia.org/wiki/Alcubierre_drive'>Alcubierre Drive</a>! There have been real studies by real scientists on whether this concept is plausible, and it just so happens that some random 11 year old thought of the same thing while writing a science fiction story.\nWhen Cynthia was only a year old, a meteor was spotted and was verified to be on a head-on collision course with Earth. A global effort was put into destroying the meteor with advanced technology, but for some reason, the project was a failure. The King pivoted to a preservation effort of Earth and its inhabitants. Escape pods were built to transport humans to Mars, and while Cynthia was safely escorted by the military and placed in an escape pod with the King's most precious journals, the King remained in his palace, gathering the rest of his belongings and sorting out global affairs in the time of crisis. The King remained up until the very last moment, focusing more on the survival of humanity than himself. I would sit in my room and listen to "In the House - In a Heartbeat" from the 28 Years Later soundtrack while imagining the last moments of Earth as the meteor collides. The King did not make it to his escape pod, and Cynthia, along with the King's five journals, was blasted towards Mars without her father. In the end, 96% of humanity, including the King, was lost to the meteor impact. The remaining 4%, consisting of the global military and many, many rich people, were forced to band together and survive Mars. The miltiary became the governing body for several years, as Cynthia still needed time to mature.\nCynthia was raised by robots programmed by her father to care for her in case he died on Earth. She spent her childhood studying her father's journals, and when the day came for her to be crowned, she reluctantly took the crown. Later that night, during a panic attack, she threw the crown to the floor, and strangely, the diamonds shattered. Within the crown jewel was a secret message from her father instructing her on where to find the prototype for the MultiJumper (Ignore all the plotholes here). She ends up finding the MultiJumper and accidentally traveling to David's Earth.`,
+				longDescription: `This song has almost no real relation to Cynthia, other than the fact that it's a somber piano piece.\n[Taken from MultiJumper Character Overview]\nCynthia Davis is a young and imaginative girl who lives with the dying population of humans remaining on Mars. She is the daughter of the king, and is soon to be declared queen. She looks up a lot to her father, and aims to be just like him, though is silently plagued by anxiety and fear. Her themes are piano-based, as that is the instrument she is most familiar with. The second theme inflicts a rising anxiety within the listener, reflecting what it is like to be her.\nTheme 1: "Little Goth" by Lena Raine. Theme 2: "Anxiety" by Lena Raine. Extra Theme: "Moonsetter" by Toby Fox.\n[Modern description starts here]\nCynthia suffered the same naming convention as David Andrews. I had this wonderful idea to create a love story between David and an alternate universe version of himself (I was quite disappointed when I learned that a few years later, the Loki series would end up doing the exact same thing). I had never seen this idea before and truly thought I was the first person to come up with it. Since David was named David Branson at the time, Cynthia's name was Brianna Davis, which is an even worse genderbent version of my name. I'm not sure when I decided to change her name to Cynthia, but for some reason the name just stood out to me. I probably changed her name after my sixth grade class had learned that I was making a genderbent OC of myself. I remember Destin teasing me about it.\nAccording to my shoddy worldbuilding, Cynthia was born on Earth into British loyalty (yes, she was British) as the daughter of the King, who at some point had a name but I don't remember it. The King was so loving and powerful that he had united every country as one, and the British monarchy became the monarchy of Earth. He was also a genius, and as "King of Earth," he enacted numerous laws that prioritized the grand pursuit of science. His wife, the queen (who literally is not mentioned anywhere in MultiJumper), gave birth to Cynthia ten years into his reign. Since there's no mention of a queen anywhere in MultiJumper, I can only imagine that she died during childbirth.\nCynthia was not the King's most cherished possession, however. When Cynthia was born, the King was finishing his plans to construct a machine that could achieve 'faster-than-light' travel. The plan was to utilize the distortion of space-time created by black holes to continuously propel the ship forwards. Little did 11 year old me know, this was actually the very same concept as the infamous <a class='non-time' href='https://en.wikipedia.org/wiki/Alcubierre_drive'>Alcubierre Drive</a>! There have been real studies by real scientists on whether this concept is plausible, and it just so happens that some random 11 year old thought of the same thing while writing a science fiction story.\nWhen Cynthia was only a year old, a meteor was spotted and was verified to be on a head-on collision course with Earth. A global effort was put into destroying the meteor with advanced technology, but for some reason, the project was a failure. The King pivoted to a preservation effort of Earth and its inhabitants. Escape pods were built to transport humans to Mars, and while Cynthia was safely escorted by the military and placed in an escape pod with the King's most precious journals, the King remained in his palace, gathering the rest of his belongings and sorting out global affairs in the time of crisis. The King remained up until the very last moment, focusing more on the survival of humanity than himself. I would sit in my room and listen to "In the House - In a Heartbeat" from the 28 Years Later soundtrack while imagining the last moments of Earth as the meteor collides. The King did not make it to his escape pod, and Cynthia, along with the King's five journals, was blasted towards Mars without her father. In the end, 96% of humanity, including the King, was lost to the meteor impact. The remaining 4%, consisting of the global military and many, many rich people, were forced to band together and survive Mars. The miltiary became the governing body for several years, as Cynthia still needed time to mature.\nCynthia was raised by robots programmed by her father to care for her in case he died on Earth. She spent her childhood studying her father's journals, and when the day came for her to be crowned, she reluctantly took the crown. Later that night, during a panic attack, she threw the crown to the floor, and strangely, the diamonds shattered. Within the crown jewel was a secret message from her father instructing her on where to find the prototype for the MultiJumper (Ignore all the plotholes here). She ends up finding the MultiJumper and accidentally traveling to David's Earth.`,
 				structure: [ [1, { bpm: 90, timeSignature: [4,4] }], ],
 				motifs: [],
 			}),
@@ -225,7 +228,7 @@ export const albums = [
 			new Song(`Cade's Theme`, {
 				daw: `GB`, date: ``,
 				shortDescription: `An envious warrior`,
-				longDescription: `At the time, this song was definitely my strangest. Cade is the Night of Time, which is a direct rip of Homestuck's class system and I abandoned it pretty quickly. That being said, however, I wanted to make a song that sounds like time itself shifting. I can't say I did a very good job, but the melodies that I thought of would reflect much later into my work.\n[Taken from MultiJumper Character Overview]\nCade Silven is a rather complicated character. Cade lives on a planet known as Axis, which houses 2 species: Humans and Tredarians. His themes are very synth-filled, to incur a sense of future and coolness within him. He is ego based, so things are pretty loud. During the second theme, things change. With him being a host for a Kerlix, he is filled with blind rage. The second theme is angry sounding, yet melancholy, to say that he's still in there somewhere.\nTheme 1: "Escape from Midwich Valley" by Carpenter Brut. Theme 2: "Purgatori" by Koraii. Extra Theme: "Atomyk Ebonpyre" by Toby Fox.\n[Modern description starts here]\nCade's name has never changed since I first thought of him. His first name is my middle name, and his last name is a distant reference to "SilverBlade," a username that I had planned on having before I thought of PersistentPessimist512. If you've read the descriptions for David and Cynthia, you would know at this point that I'm a pretty self-centered writer. Cade is an incredibly dull 'tough-guy' character that is the main antagonist of MultiJumper. I never thought of a motivation as to why he hates David's guts other than the fact that he is just simply evil. It's the lamest excuse for a villain ever. I considered making Cade some long-lost sibling of Cynthia, although that would mess with the story.\nThe canon story for Cade is weird. He belongs to a third universe, separate from David and Cynthia's, where humans live as slaves to a species known as Tredarians. He lives on a slave planet called Axis. Due to the atmosphere, everything on the planet is shaded in a deep teal. Axis has two moons, although the larger moon has mysteriously shattered to pieces. Cade is one of the many humans enslaved on Axis, and he serves as a mercenary for the Tredarians. The Tredarians have access to time-altering mechanisms, and Cade is sent on missions to assassinate strange, alien leaders in futures and pasts. The Trediarians are strict time-keepers, and instruct their mercenaries that if anything is offset in the timeline, then they are to be executed. Mercenaries like Cade are subjected to cruel, terrible things at young ages and are hardened to kill. They are trained to be vicious, unsympathetic, and extremely stealthy. They have short lifespans, as their work is incredibly dangerous. Cade is naturally talented at killing, and he has lived considerably longer than the average mercenary. In human years, he's somewhere in his twenties.\nThings get foggy in the plot here, as I never planned it fully out. In one of Cade's missions, he meets a strange hooded figure who tells him he can sneak him out of the Tredarian's rule. For some reason, Cade accepts the offer and allies with the man. Over an indeterminate amount of time, the hooded figure gains Cade's trust. The man tells Cade to call him "Denizen." Denizen understands Cade's time-traveling capabilities and incredible skill, and he sends Cade on a mission through time to explore the remains of a planet. While Cade travels back in time, he doesn't know that the man also teleports him to another universe. Unaware that he in within another universe, Cade explores a crumbling planet, which he has been told is named "Earth." Cade finds a gigantic crater, and at the center of the crater is a bright red beacon the eminates into the sky. Cade reaches the center after many hours of travel, and finds a red, flickering ball that warps space-time with its incredible power. He is overcome with an intense urge to touch the ball, and when he does, he is given immense power.\nCade gains part of Denizen's powers, and immediately uses his powers to completely genocide every timeline of the Tredarians in his home universe. It is unclear how much time passes before David, too, possesses a Kerlix, and the grand game of cat and mouse is set into action. It takes a very long time for Cade to realize that Denizen had been courting him into finding the Kerlix.`,
+				longDescription: `At the time, this song was definitely my strangest. Cade is the Night of Time, which is a direct rip of Homestuck's class system and I abandoned it pretty quickly. I wanted to make a song that sounds like time itself shifting. I can't say I did a very good job, but the melodies that I thought of would reflect much later into my work.\n[Taken from MultiJumper Character Overview]\nCade Silven is a rather complicated character. Cade lives on a planet known as Axis, which houses 2 species: Humans and Tredarians. His themes are very synth-filled, to incur a sense of future and coolness within him. He is ego based, so things are pretty loud. During the second theme, things change. With him being a host for a Kerlix, he is filled with blind rage. The second theme is angry sounding, yet melancholy, to say that he's still in there somewhere.\nTheme 1: "Escape from Midwich Valley" by Carpenter Brut. Theme 2: "Purgatori" by Koraii. Extra Theme: "Atomyk Ebonpyre" by Toby Fox.\n[Modern description starts here]\nCade's name has never changed since I first thought of him. His first name is my middle name, and his last name is a distant reference to "SilverBlade," a username that I had planned on having before I thought of PersistentPessimist512. If you've read the descriptions for David and Cynthia, you would know at this point that I'm a pretty self-centered writer. Cade is an incredibly dull 'tough-guy' character that is the main antagonist of MultiJumper. I never thought of a motivation as to why he hates David's guts other than the fact that he is just simply evil. It's the lamest excuse for a villain ever. I considered making Cade some long-lost sibling of Cynthia, although that would mess with the story.\nThe canon story for Cade is weird. He belongs to a third universe, separate from David and Cynthia's, where humans live as slaves to a species known as Tredarians. He lives on a slave planet called Axis. Due to the atmosphere, everything on the planet is shaded in a deep teal. Axis has two moons, although the larger moon has mysteriously shattered to pieces. Cade is one of the many humans enslaved on Axis, and he serves as a mercenary for the Tredarians. The Tredarians have access to time-altering mechanisms, and Cade is sent on missions to assassinate strange, alien leaders in futures and pasts. The Trediarians are strict time-keepers, and instruct their mercenaries that if anything is offset in the timeline, then they are to be executed. Mercenaries like Cade are subjected to cruel, terrible things at young ages and are hardened to kill. They are trained to be vicious, unsympathetic, and extremely stealthy. They have short lifespans, as their work is incredibly dangerous. Cade is naturally talented at killing, and he has lived considerably longer than the average mercenary. In human years, he's somewhere in his twenties.\nThings get foggy in the plot here, as I never planned it fully out. In one of Cade's missions, he meets a strange hooded figure who tells him he can sneak him out of the Tredarian's rule. For some reason, Cade accepts the offer and allies with the man. Over an indeterminate amount of time, the hooded figure gains Cade's trust. The man tells Cade to call him "Denizen." Denizen understands Cade's time-traveling capabilities and incredible skill, and he sends Cade on a mission through time to explore the remains of a planet. While Cade travels back in time, he doesn't know that the man also teleports him to another universe. Unaware that he in within another universe, Cade explores a crumbling planet, which he has been told is named "Earth." Cade finds a gigantic crater, and at the center of the crater is a bright red beacon that shines like a Minecraft beacon into the sky. Although Cade does not know it, the reader should realize that this object is the meteor that destroyed Cynthia's Earth. Cade reaches the center after many hours of travel, and finds a red, flickering ball that warps space-time with its incredible power. He is overcome with an intense urge to touch the ball, and when he does, he is given immense power.\nCade gains part of Denizen's powers, and immediately uses his powers to completely genocide every timeline of the Tredarians in his home universe. It is unclear how much time passes before David, too, possesses a Kerlix, and the grand game of cat and mouse is set into action. It takes a very long time for Cade to realize that Denizen had been courting him into finding the Kerlix.`,
 				structure: [ [1, { bpm: 100, timeSignature: [4,4] }], ],
 				motifs: [
 					[9, 17, `Cade's Theme Calm`],
@@ -236,7 +239,7 @@ export const albums = [
 			new Song(`DENIZEN`, {
 				daw: `GB`, date: `8/27/2020`,
 				shortDescription: `The Keeper of the Multiverse`,
-				longDescription: `This song is actually supposed to fit next to CADE, which is a little further down in the MultiJumper soundtrack. However, I have permanently lost the song "Denizen's Theme," which contained the very first instance of the classic, overused motif. I believe Megalovania was in there somewhere, too. On my old iPhone I had sent it to Destin and he simply said "epioc." He didn't know the pandora's box that he had just opened.\n[Taken from MultiJumper Character Overview]\nDenizen is the final and most complicated character. Being the Keeper of the Multiverse, he has mastered just about everything to master, and in turn, is virtually unstoppable. Though he's a good guy, his methods of doing right can seem slightly wrong. Both themes are filled with heavy metal to give a sense of epicness. The first theme gives an introduction to Denizen: fast, calculated, experienced, and cool. The second theme explains Denizen through an angrier aspect. The same feelings are conveyed, except it's all more intense.\nTheme 1: "Leap of Faith" by Cool and New Music Team. Theme 2: "Last Minute Hero" by Shady Cicada. Extra Theme: "MeGaLoVania" by Toby Fox.\n[Modern description starts here]\nDenizen fits the classic 'nonchalant anti-hero' trope. In my head, he was the ultimate being. The only creature stronger than Denizen was God himself. It's routine at this point for young children to create characters that are completely overpowered in every way.\nDenizen, named after a cool sounding word I saw in Homestuck, meaning "an inhabitant or resident of a particular place," is the main anti-hero presence in MultiJumper. When listening to badass-sounding songs I would imagine grand fights between Denizen and unimaginably powerful enemies. Canonically, Denizen would just be showing off. If anything posed an actual threat, Denizen would just think them out of existence. Basically, Denizen possessed the power to break the laws of thermodynamics temporarily. Information about Denizen is only supposed to be revealed way, way later into MultiJumper's story, but since I'm literally never ever coming back to MultiJumper, I might as well tell the whole story about this trope of a character.\nDenizen is a "keeper," which is not necessarily a living being in the traditional sense. Denizen is one of infinite keepers created from a mysterious force (not yet thought out) at the top layer of reality, which are then distributed to respective multiverses to reside over. Yes, the big twist at the supposed end of MultiJumper is that there are other multiverses beyond the one Denizen resides in. Denizen doesn't know why he's called Denizen, but prefers the name anyway. keepers aren't created with any inherent morals or genetics, and are physically inapable of not following the set of rules they are given. All keepers are keenly aware of the positions of every atom in the multiverse, and can predict the exact future. They are basically mechanisms with infinite processing power. In MultiJumper, multiverses follow a life and death cycle determined by two mysterious objects that look exactly identical to kernelsprites from Homestuck. Each object is called a "kerlix," and there are only two of them per multiverse.\nThe job of a keeper is to ensure that the two objects come into contact with one another, as they are quite small for the amount of power they both possess. Once the two kerlixes merge, the multiverse that contains them will collapse in on itself in an instant. The keeper will cease to exist, and that multiverse will undergo a kind of mitosis that splits into separate multiverses, which then repeat the cycle. I did not think about why that would be the case; I just thought it was cool. Each universe in a multiverse is given different "starting conditions" that determine how matter behaves in that universe. MultiJumper follows the bubble model for the multiverse, where the multiverse is a bubble that contains universe bubbles. Multiverses are contained in larger bubbles, which is an idea explored much later in the MultiJumper story.\nAnyways, to make the story interesting, Denizen is a defective keeper, which shouldn't actually be possible given the definition of keepers, but just trust me. Denizen, for some underlying reason I haven't thought of, does NOT want the kerlixes to touch. I assume I was planning for him to possess some kind of fear of the end of the multiverse, which would be unnatural for a keeper. As an adult, I realize that if the kerlixes are like seeds, then there would be absolutely no reason for them to be capable of being "absorbed" by living matter. I also planned for the kerlixes to be defective, as well, so maybe that would explain it. I don't know what I imagined "defective" to mean for perfect objects that lack any kind of variance, though. All I remember is that the white kerlix that David finds is the defective one, and the red one that Cade finds is the usual one.\nIn the ending of MultiJumper, the two kerlixes do touch, supposedly killing literally almost every "universe" of fiction created by the human race, but Denizen escapes from the multiverse to find himself in an expanse that he is not able to travel through. I gave up on MultiJumper before I could think of the next part. All of my ideas were inspired by Homestuck, and the ending was inspired by the black hole / green sun scene in [S] Cascade. I only read a few pages past that point, so I couldn't find any inspiration for MultiJumper. The truth is, I'm actually very bad at writing stories. Every time I've written something, it's had to leech off the back of another story.`,
+				longDescription: `This song is actually supposed to fit next to CADE, which is a little further down in the MultiJumper soundtrack. However, I have permanently lost the song "Denizen's Theme," which contained the very first instance of the classic, overused motif. I believe Megalovania was in there somewhere, too. On my old iPhone I had sent it to Destin and he simply said "epioc." He didn't know the pandora's box that he had just opened.\n[Taken from MultiJumper Character Overview]\nDenizen is the final and most complicated character. Being the Keeper of the Multiverse, he has mastered just about everything to master, and in turn, is virtually unstoppable. Though he's a good guy, his methods of doing right can seem slightly wrong. Both themes are filled with heavy metal to give a sense of epicness. The first theme gives an introduction to Denizen: fast, calculated, experienced, and cool. The second theme explains Denizen through an angrier aspect. The same feelings are conveyed, except it's all more intense.\nTheme 1: "Leap of Faith" by Cool and New Music Team. Theme 2: "Last Minute Hero" by Shady Cicada. Extra Theme: "MeGaLoVania" by Toby Fox.\n[Modern description starts here]\nDenizen fits the classic 'nonchalant anti-hero' trope. In my head, he was the ultimate being. The only creature stronger than Denizen was God himself. It's routine at this point for young children to create characters that are completely overpowered in every way.\nDenizen, named after a cool sounding word I saw in Homestuck, meaning "an inhabitant or resident of a particular place," is the main anti-hero presence in MultiJumper. When listening to badass-sounding songs I would imagine grand fights between Denizen and unimaginably powerful enemies. Canonically, Denizen would just be showing off. If anything posed an actual threat, Denizen would just think them out of existence. Basically, Denizen possessed the power to break the laws of thermodynamics temporarily. Information about Denizen is only supposed to be revealed way, way later into MultiJumper's story, but since I'm literally never ever coming back to MultiJumper, I might as well tell the whole story about this trope of a character.\nDenizen is a "keeper," which is not necessarily a living being in the traditional sense. Denizen is one of infinite keepers created from a mysterious force (not yet thought out) at the top layer of reality, which are then distributed to respective multiverses to reside over. Yes, the big twist at the supposed end of MultiJumper is that there are other multiverses beyond the one Denizen resides in. Denizen doesn't know why he's called Denizen, but prefers the name anyway. Keepers aren't created with any inherent morals or genetics, and are physically inapable of disobeying the set of rules they are given. All keepers are keenly aware of the positions of every atom in their multiverse, and can predict the exact future. They are basically mechanisms with infinite processing power. In MultiJumper, multiverses follow a life and death cycle determined by two mysterious objects that look exactly identical to kernelsprites from Homestuck. Each object is called a "kerlix," and there are only two of them per multiverse.\nThe job of a keeper is to ensure that the two objects come into contact with one another, as they are quite small for the amount of power they both possess. Once the two kerlixes merge, the multiverse that contains them will collapse in on itself in an instant. The keeper will cease to exist, and that multiverse will undergo a kind of mitosis that splits into separate multiverses, which then repeat the cycle. I did not think about why that would be the case; I just thought it was cool. Each universe in a multiverse is given different "starting conditions" that determine how matter behaves in that universe. MultiJumper follows the bubble model for the multiverse, where the multiverse is a bubble that contains universe bubbles. Multiverses are contained in larger bubbles, which is an idea explored much later in the MultiJumper story.\nAnyways, to make the story interesting, Denizen is a defective keeper, which shouldn't actually be possible given the definition of keepers, but just trust me. Denizen, for some underlying reason I haven't thought of, does NOT want the kerlixes to touch. I assume I was planning for him to possess some kind of fear of the end of the multiverse, which would be unnatural for a keeper. As an adult, I realize that if the kerlixes are like seeds, then there would be absolutely no reason for them to be capable of being "absorbed" by living matter. I also planned for the kerlixes to be defective, as well, so maybe that would explain it. I don't know what I imagined "defective" to mean for perfect objects that lack any kind of variance, though. All I remember is that the white kerlix that David finds is the defective one, and the red one that Cade finds is the usual one.\nIn the ending of MultiJumper, the two kerlixes do touch, supposedly killing literally almost every "universe" of fiction created by the human race, but Denizen escapes from the multiverse to find himself in an expanse that he is not able to travel through. I gave up on MultiJumper before I could think of the next part. All of my ideas were inspired by Homestuck, and the ending was inspired by the black hole / green sun scene in [S] Cascade. I only read a few pages past that point, so I couldn't find any inspiration for MultiJumper. The truth is, I'm actually very bad at writing stories. Every time I've written something, it's had to leech off the back of another story.`,
 				structure: [ [1, { bpm: 75, timeSignature: [4,4] }], ],
 				motifs: [
 					[0, 17, `Denizen's Theme`],
@@ -325,6 +328,7 @@ export const albums = [
 			}),
 			
 			new Song(`Galactic Shift`, {
+				alternativeNames: [`Beep-Boop`],
 				daw: `GB`, date: `6/24/2021`,
 				shortDescription: `Two protagonists watch a universe detonate`,
 				longDescription: ``,
@@ -531,7 +535,7 @@ export const albums = [
 			new Song(`Epoch`, {
 				daw: `FL`, date: ``,
 				shortDescription: `My first FL Studio song`,
-				longDescription: ``,
+				longDescription: `Even though this song is called "Epoch," which is perfect for a song that ushered in a new era of FL Studio in my life (a new 'epoch' of music), I actually just named this song after a mispelling of Destin's catchphrase for when we were younger and I kept showing him songs: "Epioc."`,
 				structure: [ [1, { bpm: 125, timeSignature: [4,4] }], ],
 				motifs: [],
 			}),
@@ -1139,18 +1143,6 @@ export const albums = [
 				motifs: [ [0, 0, ``], ],
 			}),
 			
-			new Song(`Cringe-Bingers`, {
-				daw: `FL`, date: `3/19/2023`,
-				shortDescription: `Theme of the Cringe-Bingers`,
-				longDescription: ``,
-				structure: [
-					[1, { bpm: 95, timeSignature: [4,4] }],
-					[37, { timeSignature: [2,4] }],
-					[38, { timeSignature: [4,4] }],
-				],
-				motifs: [ [0, 0, ``], ],
-			}),
-			
 			new Song(`Doug it Out`, {
 				alternativeNames: [`W Rizz`],
 				daw: `FL`, date: `2/23/2023`,
@@ -1191,6 +1183,18 @@ export const albums = [
 				structure: [ [1, { bpm: 102, timeSignature: [4,4] }], ],
 				motifs: [ [0, 0, ``], ],
 			}),
+
+			new Song(`Cringe-Bingers`, {
+				daw: `FL`, date: `3/19/2023`,
+				shortDescription: `Theme of the Cringe-Bingers`,
+				longDescription: ``,
+				structure: [
+					[1, { bpm: 95, timeSignature: [4,4] }],
+					[37, { timeSignature: [2,4] }],
+					[38, { timeSignature: [4,4] }],
+				],
+				motifs: [ [0, 0, ``], ],
+			}),
 		]),
 	]),
 
@@ -1201,30 +1205,6 @@ export const albums = [
 		// Disc 1
 		new Disc(null,
 		[
-			new Song(`A Doggy Christmas`, {
-				daw: `GB`, date: ``,
-				shortDescription: `Yeah, I'll eat the cookies later...`,
-				longDescription: ``,
-				structure: [ [1, { bpm: 60, timeSignature: [4,4] }], ],
-				motifs: [ [0, 0, ``], ],
-			}),
-			
-			new Song(`Trekking`, {
-				daw: `GB`, date: `1/22/2022`,
-				shortDescription: `Up and up`,
-				longDescription: ``,
-				structure: [ [1, { bpm: 95, timeSignature: [4,4] }], ],
-				motifs: [ [0, 0, ``], ],
-			}),
-			
-			new Song(`Cringe Pub`, {
-				daw: `GB`, date: ``,
-				shortDescription: `Care for a drink?`,
-				longDescription: ``,
-				structure: [ [1, { bpm: 100, timeSignature: [4,4] }], ],
-				motifs: [ [0, 0, ``], ],
-			}),
-			
 			new Song(`Old Dogs`, {
 				daw: `GB`, date: ``,
 				shortDescription: `The original theme of the Dogs`,
@@ -1232,7 +1212,7 @@ export const albums = [
 				structure: [ [1, { bpm: 80, timeSignature: [4,4] }], ],
 				motifs: [ [0, 0, ``], ],
 			}),
-			
+
 			new Song(`Oddball`, {
 				daw: `GB`, date: `11/10/2021`,
 				shortDescription: `Temper`,
@@ -1285,14 +1265,6 @@ export const albums = [
 				structure: [ [1, { bpm: 100, timeSignature: [4,4], keySignature: 'C Minor' }], ],
 				motifs: [ [0, 0, ``], ],
 			}),
-
-			new Song(`Threats, Threats (Full)`, {
-				daw: `FL`, date: `11/23/2022`,
-				shortDescription: `Destin's 12 friends`,
-				longDescription: ``,
-				structure: [ [1, { bpm: 115, timeSignature: [4,4], keySignature: 'F# Minor' }], ],
-				motifs: [ [0, 0, ``], ],
-			}),
 			
 			new Song(`Clyde & Brannon`, {
 				daw: `FL`, date: `2/18/2023`,
@@ -1305,19 +1277,44 @@ export const albums = [
 				motifs: [ [0, 0, ``], ],
 			}),
 			
-			new Song(`Patrick but it's sans`, {
-				daw: `FL`, date: `10/1/2022`,
-				shortDescription: `No comment`,
+			new Song(`Threats, Threats (Full)`, {
+				daw: `FL`, date: `11/23/2022`,
+				shortDescription: `Destin's 12 friends`,
 				longDescription: ``,
-				structure: [ [1, { bpm: 65, timeSignature: [4,4] }], ],
+				structure: [ [1, { bpm: 115, timeSignature: [4,4], keySignature: 'F# Minor' }], ],
 				motifs: [ [0, 0, ``], ],
 			}),
 			
-			new Song(`Patrick's Ascension`, {
-				daw: `FL`, date: `11/17/2022`,
-				shortDescription: `Eventually replaced by "Raturn"`,
+			new Song(`A Doggy Christmas`, {
+				daw: `GB`, date: ``,
+				shortDescription: `Yeah, I'll eat the cookies later...`,
 				longDescription: ``,
-				structure: [ [1, { bpm: 120, timeSignature: [4,4] }], ],
+				structure: [ [1, { bpm: 60, timeSignature: [4,4] }], ],
+				motifs: [ [0, 0, ``], ],
+			}),
+			
+			new Song(`Trekking`, {
+				daw: `GB`, date: `1/22/2022`,
+				shortDescription: `Up and up`,
+				longDescription: ``,
+				structure: [ [1, { bpm: 95, timeSignature: [4,4] }], ],
+				motifs: [ [0, 0, ``], ],
+			}),
+			
+			new Song(`Cringe Pub`, {
+				daw: `GB`, date: ``,
+				shortDescription: `Care for a drink?`,
+				longDescription: ``,
+				structure: [ [1, { bpm: 100, timeSignature: [4,4] }], ],
+				motifs: [ [0, 0, ``], ],
+			}),
+			
+			new Song(`Song That Plays in a Dance-Off`, {
+				alternativeNames: [`Cringe Dance-Off`],
+				daw: `FL`, date: `6/19/2022`,
+				shortDescription: `"I'll reupload this later when I improve it a bit more"`,
+				longDescription: `The melodies of this song were actually taken from Smash Mouth's "All Star" in negative harmony.`,
+				structure: [ [1, { bpm: 110, timeSignature: [4,4] }], ],
 				motifs: [ [0, 0, ``], ],
 			}),
 			
@@ -1326,6 +1323,14 @@ export const albums = [
 				shortDescription: `I just thought this song was spooky`,
 				longDescription: ``,
 				structure: [ [1, { bpm: 118.99, timeSignature: [4,4] }], ],
+				motifs: [ [0, 0, ``], ],
+			}),
+
+			new Song(`Old Nightbreak`, {
+				daw: `FL`, date: `2/18/2023`,
+				shortDescription: `The OG mental breakdown`,
+				longDescription: ``,
+				structure: [ [1, { bpm: 110, timeSignature: [3,4] }], ],
 				motifs: [ [0, 0, ``], ],
 			}),
 			
@@ -1361,15 +1366,6 @@ export const albums = [
 				shortDescription: `The End?`,
 				longDescription: ``,
 				structure: [ [1, { bpm: 60, timeSignature: [4,4] }], ],
-				motifs: [ [0, 0, ``], ],
-			}),
-			
-			new Song(`Song That Plays in a Dance-Off`, {
-				alternativeNames: [`Cringe Dance-Off`],
-				daw: `FL`, date: `6/19/2022`,
-				shortDescription: `"I'll reupload this later when I improve it a bit more"`,
-				longDescription: `The melodies of this song were actually taken from Smash Mouth's "All Star" in negative harmony.`,
-				structure: [ [1, { bpm: 110, timeSignature: [4,4] }], ],
 				motifs: [ [0, 0, ``], ],
 			}),
 		]),
@@ -1842,12 +1838,15 @@ export const albums = [
 					[216, { timeSignature: [6,4] }],
 				],
 				motifs: [
-					[19, 27, `VS Diaxr`],
+					[19, 27, `VS Lust`],
 					[27, 35, `Worm Bass`],
 					[35, 43, `© Sonos Sculptura`],
 					[35, 43, `VS Diaxr`],
 					[43, 52, `Lust Descending`],
 					[60, 68, `Lust Saxophone`],
+					[62, 62.666, `VS Diaxr Bridge`],
+					[62.666, 63.333, `VS Lust`],
+					[63.333, 64, `VS Diaxr`],
 					[67.5, 68, `David's Theme`],
 					[68, 70, `Worm Bass`],
 					[69, 70, `Denizen's Theme`],
@@ -1974,6 +1973,34 @@ export const albums = [
 		]),
 	]),
 
+	new Album(`In the Shadow of the Sun`, null,
+	[
+		// Disc 1
+		new Disc(null, [
+			new Song(`Sol`, {
+				cover: `cover_Sol`,
+				daw: `FL`, date: `12/19/2025`,
+				shortDescription: `There's something different about you`,
+				longDescription: ``,
+				structure: [ [1, { bpm: 100, timeSignature: [4,4] }], ],
+				motifs: [
+					[30, 46, `Gamed and Bamed`],
+					[38, 46, `National Boyfriend Day`],
+					[54, 62, `Dogwater`],
+				],
+			}),
+
+			new Song(`Sunspots`, {
+				cover: `cover_unknown`,
+				daw: `FL`, date: ``,
+				shortDescription: `Do you remember me?`,
+				longDescription: ``,
+				structure: [ [1, { bpm: 130, timeSignature: [4,4] }], ],
+				motifs: [],
+			}),
+		]),
+	]),
+
 	new Album(`Singles`, null,
 	[
 		// Disc 1
@@ -2003,28 +2030,6 @@ export const albums = [
 				longDescription: ``,
 				structure: [ [1, { bpm: 0, timeSignature: [4,4] }], ],
 				motifs: [ [0, 0, ``], ],
-			}),
-
-			new Song(`Sunspots`, {
-				cover: `cover_Sunspots`,
-				daw: `FL`, date: `12/19/2025`,
-				shortDescription: `There's something different about you`,
-				longDescription: ``,
-				structure: [ [1, { bpm: 100, timeSignature: [4,4] }], ],
-				motifs: [
-					[19, 35, `Gamed and Bamed`],
-					[27, 35, `National Boyfriend Day`],
-					[43, 51, `Dogwater`],
-				],
-			}),
-
-			new Song(`Maybe`, {
-				cover: `cover_unknown`,
-				daw: `FL`, date: ``,
-				shortDescription: `Do you remember me?`,
-				longDescription: ``,
-				structure: [ [1, { bpm: 130, timeSignature: [4,4] }], ],
-				motifs: [],
 			}),
 			
 			new Song(`Mechanical Paintbrush`, {

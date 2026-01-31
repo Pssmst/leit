@@ -3,14 +3,10 @@ import { colors }				from '../../../state/colors.js';
 import { layout }				from '../../../state/layout/layout.js';
 
 import * as init				from '../../../init.js';
-import * as HTML				from '../../../ui/elements.js';
 import * as cnv					from '../../canvas.js';
 import * as helpers				from '../../../helpers.js';
 import * as motifRegistry		from '../../../motif.js';
-import * as aud					from '../../../audio/audio.js';
 import * as render				from '../../render.js';
-import * as textures			from '../../../ui/textures.js';
-import * as discography			from '../../../discography.js';
 
 // Returns struct info for a given measure
 // If a struct entry doesn't have certain fields (bpm, timeSignature), they're inherited from the most recent prior entry that specified them
@@ -41,6 +37,14 @@ function getStructInfoFromMeasure(measure) {
 }
 
 export function drawTimeline() {
+
+	state.hovering.timeline.self = (
+		state.pos.trackCanvas.x >= layout.trackCanvas.frame.timeline.left
+		&& state.pos.trackCanvas.x <= layout.trackCanvas.frame.timeline.right
+		&& state.pos.trackCanvas.y >= layout.trackCanvas.frame.timeline.top
+		&& state.pos.trackCanvas.y <= layout.trackCanvas.frame.timeline.bottom
+	)
+	
 	/* Config for canDraw function for each tt feature
 		minSpacing: Space the right of a feature's hitbox that prevents the next object from rendering
 		scaleX: Visual scale put on feature
@@ -128,13 +132,26 @@ export function drawTimeline() {
 		const drawTextWidth = labelWidth * measureScaleX; // If render.getTextWidth already accounts for scale, remove the * measureScaleX
 
 		if (canDraw('measureNumber', ttCurrentDrawnX, drawTextWidth)) {
-			render.drawText(cnv.trackCtx, measureText, { x: ttCurrentDrawnX, y: layout.trackCanvas.frame.timeline.measureBar.number.top, scaleX: measureScaleX, color: colors.trackCanvas.timeline.text });
+			render.drawText(cnv.trackCtx, measureText, {
+				x: ttCurrentDrawnX,
+				y: layout.trackCanvas.frame.timeline.measureBar.number.top,
+				scaleX: measureScaleX,
+				color: colors.trackCanvas.timeline.text
+			});
 		}
 
 		///  MEASURE LINE  //////////////////////////////////////////////////////////////////
 
 		if (canDraw('measureLine', ttCurrentDrawnX, 1)) {
-			render.drawLine(cnv.trackCtx, ttCurrentDrawnX, layout.trackCanvas.frame.timeline.measureBar.bottom, ttCurrentDrawnX, layout.trackCanvas.height - layout.trackCanvas.frame.padding, colors.trackCanvas.timeline.lines.measure, 1);
+			render.drawLine(
+				cnv.trackCtx,
+				ttCurrentDrawnX,
+				layout.trackCanvas.frame.timeline.measureBar.bottom,
+				ttCurrentDrawnX,
+				layout.trackCanvas.height - layout.trackCanvas.frame.padding,
+				colors.trackCanvas.timeline.lines.measure,
+				1
+			);
 		}
 
 		///  TIME SIGNATURE  //////////////////////////////////////////////////////////////////
@@ -213,52 +230,93 @@ export function drawTimeline() {
 	}
 
 	let ttMotifY = layout.trackCanvas.frame.timeline.measureBar.bottom;
-	const ttMotifYMap = new Map();  // motifObject -> y value
+	const ttMotifYMap = new Map(); // motif -> y value
+
+	///   DRAW MOTIF BOXES   ////////////////////
+
+	const compressMotifs = state.trackCanvas.frame.motifPanel.compressMotifs;
+	let motifIndex = 0;
+	state.hovering.motif.flag = false;
 
 	// Ensure it's not a placeholder
 	if (state.selectedSong.motifs.length > 0 && state.selectedSong.motifs[0][2] != '') {
 
-		for (const tcMotifData of state.selectedSong.motifs) {
-
-			// Motif object reference
-			const motifObj = motifRegistry.getMotif(tcMotifData[2], init.motifs);
+		for (const motifData of state.selectedSong.motifs) {
+			const motif = motifRegistry.getMotif(motifData[2], init.motifs);
 
 			// Assign Y only the first time this motif is seen
-			if (!ttMotifYMap.has(motifObj)) {
-				ttMotifYMap.set(motifObj, ttMotifY);
+			if (!ttMotifYMap.has(motif)) {
+				ttMotifYMap.set(motif, ttMotifY);
 				ttMotifY += layout.trackCanvas.frame.timeline.motifHeight;
 			}
 
-			const y = ttMotifYMap.get(motifObj);
-
-			const startMeasure = tcMotifData[0];
-			const endMeasure = tcMotifData[1];
+			const startMeasure = motifData[0];
+			const endMeasure = motifData[1];
 
 			const left = measureToX(startMeasure);
 			const right = measureToX(endMeasure);
-			const ttMotifWidth = right - left;
 
+			motif.timelineX = left;
+			motif.timelineY = ttMotifYMap.get(motif);
+			motif.timelineWidth = right - left;
+			motif.timelineHeight = layout.trackCanvas.frame.timeline.motifHeight;
 
-			///   RENDER MOTIF BOX (Highlight on hover)   ////////////////////
+			if (
+				motif.timelineX != null &&
+				state.pos.trackCanvas.x >= motif.timelineX &&
+				state.pos.trackCanvas.x <= motif.timelineX + motif.timelineWidth &&
+				state.pos.trackCanvas.y >= motif.timelineY &&
+				state.pos.trackCanvas.y <= motif.timelineY + motif.timelineHeight
+			) {
+				state.hovering.motif.obj = motif;
+				state.hovering.motif.flag = true;
+				state.hovering.motif.index = motifIndex;
+			}
 
-			if (state.pos.trackCanvas.x >= left && state.pos.trackCanvas.x <= right && state.pos.trackCanvas.y >= y && state.pos.trackCanvas.y <= y + layout.trackCanvas.frame.timeline.motifHeight) {
+			///   RENDER MOTIF   ////////////////////
+			
+			if ((compressMotifs && motif === state.hovering.motif.obj) || (!compressMotifs && motifIndex === state.hovering.motif.index)) {
 				cnv.trackCanvas.style.cursor = 'pointer';
-				render.drawRect(cnv.trackCtx, left, y, ttMotifWidth, layout.trackCanvas.frame.timeline.motifHeight, motifObj.colors.color, {
-					shadow: { inner: true, shadowColor: motifObj.colors.highlight, shadowBlur: layout.trackCanvas.frame.timeline.motifHeight, left: false, right: false, top: false }
-				});
-				render.drawBorder(cnv.trackCtx, left+1, y+1, ttMotifWidth-2, layout.trackCanvas.frame.timeline.motifHeight-2, motifObj.colors.highlight);
+
+				render.drawRect(
+					cnv.trackCtx,
+					motif.timelineX, 
+					motif.timelineY,
+					motif.timelineWidth,
+					layout.trackCanvas.frame.timeline.motifHeight,
+					motif.colors.color, {
+						shadow: {
+							inner: true,
+							shadowColor: motif.colors.highlight,
+							shadowBlur: layout.trackCanvas.frame.timeline.motifHeight,
+							left: false, right: false, top: false
+						}
+					}
+				);
+				render.drawBorder(
+					cnv.trackCtx,
+					motif.timelineX + 1,
+					motif.timelineY + 1,
+					motif.timelineWidth - 2,
+					layout.trackCanvas.frame.timeline.motifHeight - 2,
+					motif.colors.highlight
+				);
 			}
 			else {
-				render.drawRect(cnv.trackCtx, left, y, ttMotifWidth, layout.trackCanvas.frame.timeline.motifHeight, motifObj.colors.color);
+				render.drawRect(
+					cnv.trackCtx,
+					motif.timelineX,
+					motif.timelineY,
+					motif.timelineWidth,
+					layout.trackCanvas.frame.timeline.motifHeight,
+					motif.colors.color
+				);
 			}
 
 			///   LABEL   ////////////////////////////////////////////////////
 
 			const advancedTruncatedString = helpers.advancedTruncateString(
-				cnv.trackCtx,
-				tcMotifData[2],
-				ttMotifWidth,
-				{
+				cnv.trackCtx, motifData[2], motif.timelineWidth, {
 					minScaleX: 0.6,
 					minScaleY: 0.5,
 					maxHeight: layout.trackCanvas.frame.timeline.motifHeight,
@@ -266,20 +324,21 @@ export function drawTimeline() {
 					fontSize: state.font.size.default,
 					paddingX: 4,
 				}
-
 			);
 
-			render.drawText(cnv.trackCtx, advancedTruncatedString.string, {
+			render.drawText(cnv.trackCtx, advancedTruncatedString.string + (state.debug.visuals[5] ? motifIndex : ''), {
 				fontSize: advancedTruncatedString.fontSize,
 				x: left + 2,
-				y: y + (layout.trackCanvas.frame.timeline.motifHeight - advancedTruncatedString.fontSize) / 2,
-				color: motifObj.colors.text,
+				y: motif.timelineY + (layout.trackCanvas.frame.timeline.motifHeight - advancedTruncatedString.fontSize) / 2,
+				color: motif.colors.text,
 				scaleX: advancedTruncatedString.scaleX,
 			});
+			motifIndex++;
 		}
 	}
 
 	// Set measureWidth for the current measure (used for playing line calculation)
+
 	state.structure.currentStructInfo = getStructInfoFromMeasure(state.structure.currentMeasure);
 	let currentRelativeBeatWidth = beatWidth * 4 / state.structure.currentStructInfo.timeSignature[1];
 	for (let beat = 1; beat <= state.structure.currentStructInfo.timeSignature[0]; beat++) {
@@ -287,6 +346,16 @@ export function drawTimeline() {
 	}
 
 	// Draw playing line
+
 	let timelineCurrentX = playingLineOffset + (state.structure.timeWithinMeasure / state.structure.durations.durationOfMeasure * measureWidth);
-	render.drawLine(cnv.trackCtx, timelineCurrentX, layout.trackCanvas.frame.padding, timelineCurrentX, layout.trackCanvas.height - layout.trackCanvas.frame.padding, colors.trackCanvas.primary, 1);
+
+	render.drawLine(
+		cnv.trackCtx,
+		timelineCurrentX,
+		layout.trackCanvas.frame.padding,
+		timelineCurrentX,
+		layout.trackCanvas.height - layout.trackCanvas.frame.padding,
+		colors.trackCanvas.primary,
+		1
+	);
 }

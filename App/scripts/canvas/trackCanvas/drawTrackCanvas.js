@@ -1,11 +1,12 @@
 import { state }				from '../../state/state.js';
 import * as cnv					from '../canvas.js';
 
-import { computeTrackLayout }	from '../../state/layout/trackCanvas/computeTrackLayout.js';
+import { computeTrackLayout }	from '../../state/layout/computeTrackLayout.js';
 
 import { drawWaveform }			from './drawWaveform.js';
 import { drawFrame }			from './frame/drawFrame.js';
 
+import * as init				from '../../init.js';
 
 export function drawTrackCanvas() {
 	if (!cnv.trackCtx || !cnv.trackCanvas || !state.selectedSong) return;
@@ -22,6 +23,8 @@ export function drawTrackCanvas() {
 
 	computeTrackLayout(canvasWidth, canvasHeight);
 
+	cnv.trackCanvas.style.cursor = 'auto';
+	
 	drawWaveform();
 	drawFrame();
 }
