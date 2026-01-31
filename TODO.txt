@@ -1,0 +1,11 @@
+Bugs:
+	- RARE: Strange bug occurs when clicking on another song right as a song finishes loading, creating duplicate entries in the timeline and info on the right
+
+Features to add:
+	- Completely collapsible info panel
+	- Lines between songs connecting motifs together
+	- Large white arrow pointing to song that contains the original ocurrence of a motif (only appears when hovering over a specific motif)
+
+	- In-App discography edit:
+		- Edit Mode Button (Top right of main canvas):
+			- Plus square at end of albums, click to add song

@@ -11,7 +11,9 @@ export const colors = {
 	},
 
 	motifs: {
-		defaultHighlight:	'hsla(200, 7%, 45%, 1.00)',
+		plagiarismBg:		'rgb(0, 0, 0)',
+		plagiarismText:		'hsla(0, 0%, 100%, 1.00)',
+		plagiarismHighlight:'hsla(200, 7%, 45%, 1.00)',
 	},
 
 	trackCanvas: {
@@ -27,6 +29,8 @@ export const colors = {
 		},
 
 		motifPanel: {
+			bg: 			'hsla(198, 19%, 21%, 1.00)',
+			
 			scrollbar: {
 				fg:			'hsla(200, 7%, 45%, 1.00)',
 				bg:			'hsla(200, 9%, 13%, 1.00)',
@@ -59,7 +63,7 @@ export const colors = {
 		visual4:			'hsla(0, 0%, 100%, 1.00)',
 		visual5:			'hsla(92, 100%, 50%, 1.00)',
 		visual6:			'hsla(60, 100%, 50%, 1.00)',
-
+		visual7:			'hsl(0, 0%, 100%)',
 		loadedAudio: {
 			border:			'hsla(0, 0%, 0%, 1.00)',
 			unloaded:		'hsla(0, 100%, 50%, 1.00)',

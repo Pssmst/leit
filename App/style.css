@@ -120,7 +120,6 @@ canvas:focus {
 	height: 100%;
 	background-color: rgb(29, 29, 29);
 	box-shadow: 0 0 20px black;
-	border-radius: 10px;
 }
 #big-cover.inactive {
 	transition: transform 0.2s ease;
@@ -199,11 +198,11 @@ canvas:focus {
 
 #info-cover {
 	cursor: pointer;
-	box-shadow: 0 0 12px rgba(0,0,0,.75);
+	box-shadow: 0 0 8px black;
 	transition: box-shadow .1s ease;
 }
 #info-cover:hover {
-	box-shadow: 0 0 20px black;
+	box-shadow: 0 0 16px black;
 }
 
 #info-title {
@@ -427,6 +426,7 @@ canvas:focus {
 	height: 100%;
 	margin-right: 15px;
 	border-radius: 2px;
+	box-shadow: 0 0 6px black;
 }
 
 #timeline-left-title {

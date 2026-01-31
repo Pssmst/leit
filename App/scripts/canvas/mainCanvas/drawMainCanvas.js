@@ -114,14 +114,23 @@ export function drawMainCanvas() {
 
 		// Compute the percentage that the HTML.spinner resides on
 		if (state.dragging.timelineSpinner) {
-			state.audio.elapsedPercent = Math.max(Math.min((state.pos.mainCanvas.x - lineRect.left) / lineRect.width, 1), 0);
+			state.audio.elapsedPercent = helpers.clamp(
+				0,
+				(state.pos.mainCanvas.x - lineRect.left) / lineRect.width,
+				1
+			);
+
 			state.audio.elapsedPercentInTime = state.selectedSong.duration * state.audio.elapsedPercent;
 
 			elapsedDivText = helpers.secondsToTimestamp(state.audio.elapsedPercentInTime);
 			remainingDivText = `-` + helpers.secondsToTimestamp(state.selectedSong.duration - state.audio.elapsedPercentInTime);
 		}
 		else {
-			state.audio.elapsedPercent = Math.max(Math.min(state.audio.elapsed / state.selectedSong.duration, 1), 0);
+			state.audio.elapsedPercent = helpers.clamp(
+				0,
+				state.audio.elapsed / state.selectedSong.duration,
+				1
+			);
 
 			elapsedDivText = helpers.secondsToTimestamp(state.audio.elapsed);
 			remainingDivText = `-` + helpers.secondsToTimestamp(state.selectedSong.duration - state.audio.elapsed);
@@ -153,7 +162,11 @@ export function drawMainCanvas() {
 
 		// Compute the percentage that the volume HTML.spinner resides on
 		if (state.dragging.volumeSpinner) {
-			state.audio.volume = Math.max(Math.min((state.pos.mainCanvas.x - volumeLineRect.left) / volumeLineRect.width, 1), 0);
+			state.audio.volume = helpers.clamp(
+				0,
+				(state.pos.mainCanvas.x - volumeLineRect.left) / volumeLineRect.width,
+				1
+			);
 		}
 
 		// Indicate volume through icon
@@ -176,7 +189,7 @@ export function drawMainCanvas() {
 
 		if (state.audio.elapsed === state.selectedSong.duration) {
 			if (state.audio.looping) {
-				setElapsed(0);
+				aud.setElapsed(0);
 			}
 			else {
 				init.playNextSong(state.selectedSong, 1, state.audio.shuffle);

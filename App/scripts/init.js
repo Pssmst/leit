@@ -5,6 +5,7 @@ import { layout }			from './state/layout/layout.js';
 import * as HTML			from './ui/elements.js';
 import * as cnv				from './canvas/canvas.js';
 import * as helpers			from './helpers.js';
+import * as colorHandle		from './ui/colorHandling.js';
 import * as motifRegistry	from './motif.js';
 import * as aud				from './audio/audio.js';
 import * as render			from './canvas/render.js';
@@ -259,6 +260,8 @@ export async function initSong(song) {
 
 	layout.trackCanvas.frame.motifPanel.scrollOffset = 0;
 
+	motifRegistry.clearMotifLayout(motifs);
+
 	try {
 		const res = await aud.playMusic(song.songPath, state.audio.volume, state.audio.looping);
 		// playMusic returns { startedAt, duration } or { startedAt: null, duration: null } if aborted
@@ -279,7 +282,7 @@ export async function initSong(song) {
 
 		// Log the top 2 colors for this cover
 		try {
-			const topColors = await helpers.getColorsFromImage(song.cover.src, { maxSize: 200, colorBits: 4, count: 3 });
+			const topColors = await colorHandle.getColorsFromImage(song.cover.src, { maxSize: 200, colorBits: 4, count: 3 });
 			song.colors = topColors;
 
 			// CONSTRUCT GRADIENT
@@ -351,12 +354,12 @@ export async function initSong(song) {
 				const p = document.createElement('p');
 				p.innerHTML = paragraph;
 
-				p.querySelectorAll('n').forEach(n => {
-					if (!n.closest('.non-time')) {
-						n.classList.add('time');
+				p.querySelectorAll('a').forEach(a => {
+					if (!a.closest('.non-time')) {
+						a.classList.add('time');
 					}
 					else {
-						n.target = "_blank";
+						a.target = "_blank";
 					}
 				});
 				document.getElementById('detail-contents-longDescription').appendChild(p);
@@ -366,7 +369,7 @@ export async function initSong(song) {
 
 			timestampsInDescription.forEach(timestamp => {
 				timestamp.addEventListener('click', () => {
-					setElapsed(helpers.timestampToSeconds(timestamp.textContent));
+					aud.setElapsed(helpers.timestampToSeconds(timestamp.textContent));
 
 					// Remove the class if it’s already there
 					HTML.spinner.classList.remove("timestamped");

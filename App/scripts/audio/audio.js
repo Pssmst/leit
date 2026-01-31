@@ -332,3 +332,12 @@ export async function setPlaybackTime(seconds, playImmediately = true, { volume 
 
 	return { soughtTo: s, duration: duration };
 }
+
+
+export async function setElapsed(newTime) {
+	if (!state.loading) {
+		// If currently playing, keep playing after seek; if paused, keep paused
+		const playImmediately = !isPlaybackPaused();
+		await setPlaybackTime(newTime, playImmediately);
+	}
+}

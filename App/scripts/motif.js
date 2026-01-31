@@ -1,5 +1,8 @@
-import * as helpers	from './helpers.js';
-import { colors }	from './state/colors.js';
+import { state }		from './state/state.js';
+import { colors }		from './state/colors.js';
+
+import * as helpers		from './helpers.js';
+import * as colorHandle	from './ui/colorHandling.js';
 
 export class Motif {
 	constructor(name,
@@ -11,8 +14,8 @@ export class Motif {
 	) {
 		this.name = name;
 		this.occurrences = occurrences;
-		this.rawHSV = null;
 		this.origin = origin;
+		this.hovering = false;
 
 		this.colors = {
 			color: color,
@@ -26,7 +29,7 @@ export class Motif {
 export function buildMotifsFromSongs(songs) {
 	const motifs = [];
 
-	function getMotif(name) {
+	function get(name) {
 		return motifs.find(m => m.name === name);
 	}
 
@@ -34,7 +37,7 @@ export function buildMotifsFromSongs(songs) {
 		for (const [start, end, name] of song.motifs) {
 			if (!name) continue;
 
-			let motif = getMotif(name);
+			let motif = get(name);
 			if (!motif) {
 				motif = new Motif(name);
 				motifs.push(motif);
@@ -57,48 +60,107 @@ export function getMotif(name, motifs) {
 	}
 }
 
+export const minHue = 0;
+export const maxHue = 360;
+
+export const minSat = 30;
+export const maxSat = 100;
+
+export const minVal = 30;
+export const maxVal = 100;
+
+function createHighlightHSV(h, s, v, intensity = 0.5) {
+    const vn = v / 100;
+    const sn = s / 100;
+
+    // Simplified version of the Photopic Vision curve
+    // Cyan (180) and Yellow (60) get higher weights.
+    const rad = (h * Math.PI) / 180;
+    const perceptualWeight = 0.7 + 0.3 * Math.cos(rad - (60 * Math.PI / 180));
+
+    // Uses intensity to close the gap toward 100% Value
+    const vBoost = (1 - vn) * intensity;
+    const vOut = Math.min(1, vn + vBoost + (0.1 * intensity));
+
+    // If a color is already bright (high vn) or naturally sensitive (perceptualWeight), drop saturation to make it "look" brighter
+    const sCrush = sn * intensity * (vn * perceptualWeight);
+    const sOut = Math.max(0, sn - sCrush);
+
+    // Shifts slightly toward "light" (Yellow/White)
+    const hShift = 40 * intensity * (h > 60 && h < 240 ? -1 : 1);
+    const hOut = (h + hShift + 360) % 360;
+
+    return [
+        Math.round(hOut),
+        Math.round(sOut * 100),
+        Math.round(vOut * 100)
+    ];
+}
+
+export function createMotifColors(hue, sat, val) {
+	// Base color
+	const [r, g, b] = colorHandle.HSVtoRGB(hue, sat, val);
+	const color = `rgb(${r}, ${g}, ${b})`;
+
+	// Incredibly bright highlight
+	const highlightHSV = createHighlightHSV(hue, sat, val);
+
+	const highlightRGB = colorHandle.HSVtoRGB(highlightHSV[0], highlightHSV[1], highlightHSV[2]);
+	const highlight = `rgb(${highlightRGB[0]},${highlightRGB[1]},${highlightRGB[2]})`;
+
+	// Text color (contrast-based)
+	const bgRGB = [r, g, b];
+	const cw = colorHandle.getContrast(bgRGB, [255, 255, 255]);
+	const cb = colorHandle.getContrast(bgRGB, [0, 0, 0]) * 0.3;
+
+	const darkTextRGB = colorHandle.HSVtoRGB(hue, sat, val * 0.2);
+
+	const text = (cw >= cb ? colors.white : `rgb(${darkTextRGB[0]},${darkTextRGB[1]},${darkTextRGB[2]})`);
+
+	return {
+		color,
+		highlight,
+		text
+	};
+}
 
 export function scrambleMotifColors(motifs) {
 	for (const motif of motifs) {
-		let hue = helpers.randInt(0, 360);
-		let sat = helpers.randInt(20, 100);
-		let val = helpers.randInt(50, 100);
+		const isCopyright = motif.name.startsWith('©');
 
-		const isCopyright = motif.name.substring(0,1) === '©';
-
-		// Make motif black if plagiarism
+		// Check for copyrighted motif
 		if (isCopyright) {
-			hue = 0;
-			sat = 0;
-			val = 0;
-		}
-
-		// Keep raw HSV for your logic/UI
-		motif.rawHSV = { h: hue, s: sat, v: val };
-
-		// Convert and set a browser-safe CSS color string
-		const [r, g, b] = helpers.convertColor('hsv', 'rgb', [hue, sat, val]);
-
-		motif.colors.color = `rgb(${r}, ${g}, ${b})`;
-
-		// Create color for highlighted motifs (in motif panel)
-		const motifBoxLighterGradient = helpers.convertColor('hsv', 'rgb', [ motif.rawHSV.h + 15, motif.rawHSV.s, Math.min(motif.rawHSV.v*1.5, 255) ]);
-
-		if (isCopyright) {
-			motif.colors.highlight = colors.motifs.defaultHighlight;
+			motif.colors.color = colors.motifs.plagiarismBg;
+			motif.colors.text = colors.motifs.plagiarismText;
+			motif.colors.highlight = colors.motifs.plagiarismHighlight;
 		}
 		else {
-			motif.colors.highlight = `rgb(${motifBoxLighterGradient[0]},${motifBoxLighterGradient[1]},${motifBoxLighterGradient[2]})`;
-		}
+			// Generate random color
+			let hue = helpers.randInt(minHue, maxHue);
+			let sat = helpers.randInt(minSat, maxSat);
+			let val = helpers.randInt(minVal, maxVal);
 
-		// Sees if the name needs to be inverted (darker)
-		// Goes off 'percieved' colors
-		const bgRGB = helpers.convertColor('hsv', 'rgb', [motif.rawHSV.h, motif.rawHSV.s, motif.rawHSV.v]);
-		const cw = helpers.getContrast(bgRGB, [255, 255, 255]);
-		const cb = helpers.getContrast(bgRGB, [0, 0, 0]) * .3; // Weighted bc I prefer having white text
-	
-		// Pick whichever has better contrast
-		const color_raw_motifBoxTextDark = helpers.convertColor('hsv', 'rgb', [ motif.rawHSV.h, motif.rawHSV.s, motif.rawHSV.v * 0.2 ]);
-		motif.colors.text = (cw >= cb ? colors.white : `rgb(${color_raw_motifBoxTextDark[0]},${color_raw_motifBoxTextDark[1]},${color_raw_motifBoxTextDark[2]})`);
+			// Generate colors via the shared function
+			const colorsOut = createMotifColors(hue, sat, val);
+
+			// Assign colors
+			motif.colors.color = colorsOut.color;
+			motif.colors.text = colorsOut.text;
+			motif.colors.highlight = colorsOut.highlight;
+		}
+	}
+}
+
+export function clearMotifLayout(motifs) {
+	for (const motif of motifs) {
+		motif.panelX = null;
+		motif.panelY = null;
+		motif.width = null;
+		motif.height = null;
+
+		motif.timelineX = null;
+		motif.timelineY = null;
+		motif.timelineWidth = null;
+		motif.timelineHeight = null;
 	}
 }
