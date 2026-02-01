@@ -108,6 +108,27 @@ export function registerInput() {
 			case "Equal":
 				layout.trackCanvas.frame.timeline.motifHeight++;
 				break;
+			
+			case "Backquote":
+				function exportDiscography() {
+					const data = {
+						discography: discography.albums
+					};
+
+					const json = JSON.stringify(data, null, 4);
+					const blob = new Blob([json], { type: "application/json" });
+
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement("a");
+					a.href = url;
+					a.download = "discography.json";
+					a.click();
+
+					URL.revokeObjectURL(url);
+				}
+
+				exportDiscography();
+				break;
 		}
 	});
 

@@ -9,7 +9,7 @@ import * as aud				from './audio/audio.js';
 import * as render			from './canvas/render.js';
 import * as textures		from './ui/textures.js';
 import * as init			from './init.js';
-import * as discography		from './discography.js';
+import * as d		from './discography.js';
 
 import { drawMainCanvas }	from './canvas/mainCanvas/drawMainCanvas.js';
 import { drawTrackCanvas }	from './canvas/trackCanvas/drawTrackCanvas.js';

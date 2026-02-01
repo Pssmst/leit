@@ -2,10 +2,16 @@
 .DS_Store
 Thumbs.db
 
-# Ignore all files inside assets/Music
+# Ignore all files inside assets/Music but keep the folder itself
 App/assets/Music/*
-
-# Keep the folder itself
 !App/assets/Music/.gitkeep
 
-update-music-folder.bat
+# Electron crappy crap
+node_modules/
+dist/
+build/
+out/
+release/
+.electron/
+.electron-builder/
+npm-debug.log*

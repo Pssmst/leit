@@ -23,7 +23,6 @@ export const infoDivLeftHitboxWidth = 10;
 export const audioContext = window.audioContext || new (window.AudioContext || window.webkitAudioContext)();
 
 
-// Called at the start of main() in script.js only once
 export function initMain() {
 	// Prepare discography data
 	discography.updateEverything();
