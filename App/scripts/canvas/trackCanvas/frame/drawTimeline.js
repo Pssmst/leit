@@ -7,6 +7,7 @@ import * as cnv					from '../../canvas.js';
 import * as helpers				from '../../../helpers.js';
 import * as motifRegistry		from '../../../motif.js';
 import * as render				from '../../render.js';
+import * as discography			from '../../../discography.js';
 
 // Returns struct info for a given measure
 // If a struct entry doesn't have certain fields (bpm, timeSignature), they're inherited from the most recent prior entry that specified them
@@ -70,8 +71,8 @@ export function drawTimeline() {
 
 		const requiredLeft = overlapState.lastRight[kind] + (cfg.minSpacing || 0);
 
-		// Draw debug hitboxes5
-		if (state.debug.visuals[5]) {
+		// Draw debug hitboxes
+		if (state.debug.visuals.showHitboxes) {
 			switch (kind) {
 				
 				case "measureNumber":
@@ -242,7 +243,7 @@ export function drawTimeline() {
 	if (state.selectedSong.motifs.length > 0 && state.selectedSong.motifs[0][2] != '') {
 
 		for (const motifData of state.selectedSong.motifs) {
-			const motif = motifRegistry.getMotif(motifData[2], init.motifs);
+			const motif = motifRegistry.getMotif(motifData[2], discography.motifs);
 
 			// Assign Y only the first time this motif is seen
 			if (!ttMotifYMap.has(motif)) {
@@ -326,7 +327,7 @@ export function drawTimeline() {
 				}
 			);
 
-			render.drawText(cnv.trackCtx, advancedTruncatedString.string + (state.debug.visuals[5] ? motifIndex : ''), {
+			render.drawText(cnv.trackCtx, advancedTruncatedString.string + (state.debug.visuals.audio ? motifIndex : ''), {
 				fontSize: advancedTruncatedString.fontSize,
 				x: left + 2,
 				y: motif.timelineY + (layout.trackCanvas.frame.timeline.motifHeight - advancedTruncatedString.fontSize) / 2,

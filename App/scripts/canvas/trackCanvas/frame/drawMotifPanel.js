@@ -13,23 +13,23 @@ import * as textures			from '../../../ui/textures.js';
 import * as discography			from '../../../discography.js';
 
 function calculateMotifPanelHeight(motifParam) {
-    let drawnMotifs = [];
-    let height = 0;
+	let drawnMotifs = [];
+	let height = 0;
 
-    for (const motifData of motifParam) {
-        const motif = motifRegistry.getMotif(motifData[2], init.motifs);
+	for (const motifData of motifParam) {
+		const motif = motifRegistry.getMotif(motifData[2], discography.motifs);
 
-        if (motifData[1] === 0 ||
-            (state.trackCanvas.frame.motifPanel.compressMotifs && drawnMotifs.includes(motif.name))
-        ) continue;
+		if (motifData[1] === 0 ||
+			(state.trackCanvas.frame.motifPanel.compressMotifs && drawnMotifs.includes(motif.name))
+		) continue;
 
-        drawnMotifs.push(motif.name);
+		drawnMotifs.push(motif.name);
 
-        const motifHeight = state.font.size.default + layout.trackCanvas.frame.motifPanel.motifOffset * 3;
+		const motifHeight = state.font.size.default + layout.trackCanvas.frame.motifPanel.motifOffset * 3;
 
-        height += motifHeight;
-    }
-    return height;
+		height += motifHeight;
+	}
+	return height;
 }
 
 export function drawMotifPanel() {
@@ -41,36 +41,36 @@ export function drawMotifPanel() {
 	);
 	
 	// Calculate scrollbar distances and limits
-    const ttPanelAllMotifsHeight = calculateMotifPanelHeight(state.selectedSong.motifs);
-    
-    const totalRenderedHeight = ttPanelAllMotifsHeight + layout.trackCanvas.frame.motifPanel.motifOffset;
-    const ttPanelOverflowHeight = totalRenderedHeight - layout.trackCanvas.frame.motifPanel.height;
+	const ttPanelAllMotifsHeight = calculateMotifPanelHeight(state.selectedSong.motifs);
+	
+	const totalRenderedHeight = ttPanelAllMotifsHeight + layout.trackCanvas.frame.motifPanel.motifOffset;
+	const ttPanelOverflowHeight = totalRenderedHeight - layout.trackCanvas.frame.motifPanel.height;
 
-    const ttPanelScrollbarFGHeight = totalRenderedHeight > 0 
-        ? Math.min(layout.trackCanvas.frame.motifPanel.height * (layout.trackCanvas.frame.motifPanel.height / totalRenderedHeight), layout.trackCanvas.frame.motifPanel.height) 
-        : layout.trackCanvas.frame.motifPanel.height;
+	const ttPanelScrollbarFGHeight = totalRenderedHeight > 0 
+		? Math.min(layout.trackCanvas.frame.motifPanel.height * (layout.trackCanvas.frame.motifPanel.height / totalRenderedHeight), layout.trackCanvas.frame.motifPanel.height) 
+		: layout.trackCanvas.frame.motifPanel.height;
 
-    state.trackCanvas.frame.motifPanel.scrollbarNeeded = ttPanelScrollbarFGHeight < layout.trackCanvas.frame.motifPanel.height;
+	state.trackCanvas.frame.motifPanel.scrollbarNeeded = ttPanelScrollbarFGHeight < layout.trackCanvas.frame.motifPanel.height;
 
-    // Clamp scroll offset
-    layout.trackCanvas.frame.motifPanel.scrollOffset = (
-        state.trackCanvas.frame.motifPanel.scrollbarNeeded
-        ? helpers.clamp(
-            -ttPanelOverflowHeight, 
-            layout.trackCanvas.frame.motifPanel.scrollOffset, 
-            0)
-        : 0
-    );
+	// Clamp scroll offset
+	layout.trackCanvas.frame.motifPanel.scrollOffset = (
+		state.trackCanvas.frame.motifPanel.scrollbarNeeded
+		? helpers.clamp(
+			-ttPanelOverflowHeight, 
+			layout.trackCanvas.frame.motifPanel.scrollOffset, 
+			0)
+		: 0
+	);
 
-    // Calculate scrollbar position
-    const ttPanelScrollbarEmptyHeight = layout.trackCanvas.frame.motifPanel.height - ttPanelScrollbarFGHeight;
-    
-    let scrollRatio = 0;
-    if (ttPanelOverflowHeight > 0) {
-        scrollRatio = -layout.trackCanvas.frame.motifPanel.scrollOffset / ttPanelOverflowHeight;
-    }
+	// Calculate scrollbar position
+	const ttPanelScrollbarEmptyHeight = layout.trackCanvas.frame.motifPanel.height - ttPanelScrollbarFGHeight;
+	
+	let scrollRatio = 0;
+	if (ttPanelOverflowHeight > 0) {
+		scrollRatio = -layout.trackCanvas.frame.motifPanel.scrollOffset / ttPanelOverflowHeight;
+	}
 
-    const ttPanelScrollbarTop = layout.trackCanvas.frame.timeline.top + scrollRatio * ttPanelScrollbarEmptyHeight;
+	const ttPanelScrollbarTop = layout.trackCanvas.frame.timeline.top + scrollRatio * ttPanelScrollbarEmptyHeight;
 
 	// Draw scrollbar
 	if (state.trackCanvas.frame.motifPanel.scrollbarNeeded) {
@@ -113,7 +113,7 @@ export function drawMotifPanel() {
 	let drawnMotifs = [];
 
 	for (const motifData of state.selectedSong.motifs) {
-		let motif = motifRegistry.getMotif(motifData[2], init.motifs);
+		let motif = motifRegistry.getMotif(motifData[2], discography.motifs);
 
 		// Skip this iteration if this motif is already included in drawnMotifs (ignore if compressedMotifs is enabled)
 		if (motifData[1] === 0 || (compressMotifs && drawnMotifs.includes(motif.name))) continue;
@@ -123,19 +123,19 @@ export function drawMotifPanel() {
 		motif.panelX = layout.trackCanvas.frame.timeline.left + layout.trackCanvas.frame.motifPanel.motifOffset;
 		motif.panelY = motifY + layout.trackCanvas.frame.motifPanel.scrollOffset;
 		motif.width = layout.trackCanvas.frame.motifPanel.motifBox.width - (state.trackCanvas.frame.motifPanel.scrollbarNeeded ? layout.trackCanvas.frame.motifPanel.scrollbar.width : 0);
-		motif.height = state.font.size.default + layout.trackCanvas.frame.motifPanel.motifOffset*2;
+		motif.height = state.font.size.default + layout.trackCanvas.frame.motifPanel.motifOffset * 2;
 		
 		if (
-            motif.panelX != null &&
-            state.pos.trackCanvas.x >= motif.panelX &&
-            state.pos.trackCanvas.x <= motif.panelX + motif.width &&
-            state.pos.trackCanvas.y >= motif.panelY &&
-            state.pos.trackCanvas.y <= motif.panelY + motif.height
-        ) {
-            state.hovering.motif.obj = motif;
+			motif.panelX != null &&
+			state.pos.trackCanvas.x >= motif.panelX &&
+			state.pos.trackCanvas.x <= motif.panelX + motif.width &&
+			state.pos.trackCanvas.y >= motif.panelY &&
+			state.pos.trackCanvas.y <= motif.panelY + motif.height
+		) {
+			state.hovering.motif.obj = motif;
 			state.hovering.motif.flag = true;
 			state.hovering.motif.index = motifIndex;
-        }
+		}
 
 		///   RENDER MOTIF   ////////////////////
 
@@ -196,7 +196,7 @@ export function drawMotifPanel() {
 			}
 		);
 		
-		render.drawText(cnv.trackCtx, advancedTruncatedString.string + (state.debug.visuals[5] ? motifIndex : ''), {
+		render.drawText(cnv.trackCtx, advancedTruncatedString.string + (state.debug.visuals.showHitboxes ? motifIndex : ''), {
 			fontSize: advancedTruncatedString.fontSize,
 			x: motif.panelX + layout.trackCanvas.frame.motifPanel.motifOffset,
 			y: motif.panelY + layout.trackCanvas.frame.motifPanel.motifOffset,

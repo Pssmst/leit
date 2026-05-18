@@ -25,8 +25,10 @@
 <body>
 	<div id="main">
 		<canvas id="main-canvas"></canvas>
-
+		
 		<div id="info"></div>
+		
+		<button id="button-edit">+</button>
 
 		<div id="timeline">
 			<div id="timeline-contents">
@@ -77,13 +79,28 @@
 				<canvas id="track-canvas"></canvas>
 			</div>
 		</div>
+
+
+		<div id="context-menu">
+			<ul>
+				<li>Edit</li>
+				<li>Delete</li>
+			</ul>
+		</div>
+
 	</div>
 
 	<div id="big-cover-overlay"></div>
 	<div id="big-cover-wrapper">
 		<img id="big-cover" class="inactive" src="">
 	</div>
-	
+
+	<div id="loading-overlay" style="display: none">
+		<h2 id="loading-status"></h2>
+		<div class="loading-bar-container">
+			<div id="loading-bar"></div>
+		</div>
+	</div>
 	
 	<script type="module" src="./scripts/script.js"></script>
 </body>

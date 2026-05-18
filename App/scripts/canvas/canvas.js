@@ -5,7 +5,6 @@ canvas.addEventListener('contextmenu', e => e.preventDefault());
 export const trackCanvas = document.getElementById('track-canvas');
 export const trackCtx = trackCanvas.getContext('2d');
 trackCanvas.addEventListener('contextmenu', e => e.preventDefault());
-
 /**
  * Resize a canvas to match its CSS layout size multiplied by devicePixelRatio,
  * and set the context transform so 1 unit = 1 CSS pixel.

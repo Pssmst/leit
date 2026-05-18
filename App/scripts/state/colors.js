@@ -1,12 +1,19 @@
 export const colors = {
-	default:				'hsla(0, 0%, 100%, 1.00)',
 	white:					'hsla(0, 0%, 100%, 1.00)',
 	transparent:			'hsla(0, 0%, 100%, 0)',
+
+	albumText:				'hsl(0, 0%, 49%)',
+
+	edit: {
+		newSong:			'hsl(0, 0%, 15%)',
+		newSongPlus:		'hsl(0, 0%, 40%)',
+	},
 
 	song: {
 		border: {
 			selected:		'hsla(0, 0%, 100%, 1.00)',
-			hover:			'hsla(0, 0%, 70%, 1.00)',
+			pressed:		'hsl(0, 0%, 70%)',
+			hovered:		'hsla(0, 0%, 50%, 1.00)',
 		},
 	},
 
@@ -57,23 +64,37 @@ export const colors = {
 
 	debug: {
 		bg:					'hsla(0, 0%, 0%, 0.80)',
-		visual1:			'hsla(0, 0%, 100%, 1.00)',
-		visual2:			'hsla(0, 0%, 100%, 1.00)',
-		visual3:			'hsla(0, 0%, 100%, 1.00)',
-		visual4:			'hsla(0, 0%, 100%, 1.00)',
-		visual5:			'hsla(92, 100%, 50%, 1.00)',
-		visual6:			'hsla(60, 100%, 50%, 1.00)',
-		visual7:			'hsl(0, 0%, 100%)',
+		default:			'#ffffff',
+		scrollIndicator:	'rgba(255, 255, 255, 0.5)',
+
+		visuals: {
+			fps:			'#ffffff',
+			audio:			'hsla(92, 100%, 50%, 1.00)',
+			showHitboxes:	'hsla(60, 100%, 50%, 1.00)',
+			motifPalette:	'rgb(97, 210, 255)',
+			states:			'#ffffff',
+			colors:			'#ffffff',
+			layout:			'#ffffff',
+		},
+
 		loadedAudio: {
 			border:			'hsla(0, 0%, 0%, 1.00)',
 			unloaded:		'hsla(0, 100%, 50%, 1.00)',
 			loaded:			'hsla(120, 100%, 50%, 1.00)',
 		},
 
+		tokens: {
+			number:			'#c765ff',
+			bool:			'#75b1f7',
+			string:			'#76ec61',
+			color:			'#e4e4e4',
+			other:			'#c0c0c0',
+		},
+
 		hitboxes: {
 			self:			'hsla(0, 0%, 100%, 1.00)',
 			unallowed:		'hsla(0, 100%, 50%, 1.00)',
-			text:			'hsla(59, 100%, 50%, 1.00)',
+			text:			'hsla(60, 100%, 50%, 1.00)',
 		}
 	},
 };

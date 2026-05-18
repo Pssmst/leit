@@ -7,11 +7,11 @@ export const audioCache = new Map();		// path -> Promise<AudioBuffer>
 // Playback state to support pause/resume/seek
 export let currentSource = null;
 export let currentGainNode = null;
-export const activeGainNodes = new Set();   // Keep track of all live gain nodes
-export let playRequestId = 0;			   // Keep track of the most recent playMusic call
+export const activeGainNodes = new Set();	// Keep track of all live gain nodes
+export let playRequestId = 0;				// Keep track of the most recent playMusic call
 export let currentBuffer = null;
 export let currentPath = null;
-export let startedAt = 0;				   // init.audioContext.currentTime when playback started (adjusted for offset)
+export let startedAt = 0;					// init.audioContext.currentTime when playback started (adjusted for offset)
 export let pausedAt = 0;					// Seconds into the track when paused
 export let isPaused = false;
 
@@ -26,11 +26,8 @@ export const cacheUpdateThreshold = .2;
 
 export function resetClock() {
 	clearInterval();
-
 	startTime = Date.now();
-	setInterval(() => {
-		timeSinceLastCacheUpdateAttempt = ((Date.now() - startTime) / 1000);
-	}, 1);
+	setInterval(() => { timeSinceLastCacheUpdateAttempt = ((Date.now() - startTime) / 1000); }, 1);
 }
 
 ////  ANALYSER  ////////////////////////////////////////////////////////////////////
@@ -75,7 +72,7 @@ async function ensureAudioContextIsRunning() {
 }
 
 // Safely stop & disconnect current source (if any)
-function stopCurrentSource() {
+export function stopCurrentSource() {
 	if (!currentSource) return;
 	try { currentSource.stop(); } catch (e) {}
 	try { currentSource.disconnect(); } catch (e) {}
@@ -143,7 +140,7 @@ function createAndStartSource(buffer, offset = 0, { volume = 0.5, loop = false }
 	source.start(0, offset);
 
 	currentSource = source;
-	currentGainNode = gainNode; // Still keep this convenience pointer
+	currentGainNode = gainNode;
 
 	source.onended = () => {
 		// Remove references for this source/gain when it finishes
@@ -172,26 +169,28 @@ export function loadAudio(path) {
 	resetClock();
 
 	const p = (async () => {
-		const resp = await fetch(path);
-		const arrayBuffer = await resp.arrayBuffer();
-
-		// decodeAudioData can be promise-based or callback-based across browsers
 		try {
-			return await init.audioContext.decodeAudioData(arrayBuffer.slice(0));
-		} catch (err) {
-			return await new Promise((resolve, reject) => {
-				init.audioContext.decodeAudioData(arrayBuffer.slice(0), resolve, reject);
-			});
+			const response = await fetch(path);
+			
+			if (!response.ok) {
+				throw new Error(`Fetch failed with status: ${response.status}`);
+			}
+			
+			const arrayBuffer = await response.arrayBuffer();
+			return await init.audioContext.decodeAudioData(arrayBuffer);
+		}
+		catch (err) {
+			console.error(`Error for ${path}:`, err);
+			throw err; // Re-throw so playMusic can catch it
 		}
 	})();
 
 	audioCache.set(path, p);
 
+	// Delete oldest entry
 	if (audioCache.size > MAX_CACHE_SIZE) {
-		// Delete oldest entry
 		audioCache.delete(audioCache.keys().next().value);
 	}
-
 	return p;
 }
 

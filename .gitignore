@@ -2,9 +2,15 @@
 .DS_Store
 Thumbs.db
 
-# Ignore all files inside assets/Music but keep the folder itself
-App/assets/Music/*
-!App/assets/Music/.gitkeep
+# Ignore all files inside data and discographies
+App/assets/data/*
+!App/assets/data/.gitkeep
+App/assets/discographies/*
+!App/assets/discographies/.gitkeep
+
+# Ignore covers
+App/assets/textures/covers/*
+!App/assets/textures/covers/unknown.png
 
 # Electron crappy crap
 node_modules/

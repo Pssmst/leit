@@ -1,6 +1,6 @@
 import { state } from '../state/state.js';
 import { colors } from '../state/colors.js';
-
+import * as textures from '../ui/textures.js';
 
 export function getTextWidth(ctx, text, font = state.font.default, fontSize = state.font.size.default) {
 	ctx.font = fontSize + "px " + font;
@@ -20,7 +20,7 @@ export function drawText(
 		y = 0,
 		font = state.font.default,
 		fontSize = state.font.size.default,
-		color = colors.default,
+		color = colors.white,
 		scaleX = 1,
 		scaleY = 1,
 		alpha = 1,
@@ -65,16 +65,16 @@ export function drawText(
 }
 
 
-
-export function drawLine(ctx, x1, y1, x2, y2, color = colors.default, lineWidth = 1) {
+export function drawLine(ctx, x1, y1, x2, y2, color = colors.white, lineWidth = 1) {
 	ctx.strokeStyle = color;
 	ctx.lineWidth = lineWidth;
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2, y2);
 	ctx.stroke();
-	ctx.strokeStyle = colors.default;
+	ctx.strokeStyle = colors.white;
 }
+
 
 export function drawRect(
 	ctx, x, y, width, height, color, {
@@ -147,7 +147,7 @@ export function drawRect(
 		return;
 	}
 
-	// INNER shadow using inside gradients (no offscreen canvas) — more reliable and fast
+	// INNER shadow using inside gradients (no offscreen canvas); more reliable and fast
 	if (shadow && inner) {
 		ctx.save();
 
@@ -215,19 +215,17 @@ export function drawRect(
 }
 
 
-export function drawBorder(ctx, x, y, width, height, color = colors.default, lineWidth = 1) {
+export function drawBorder(ctx, x, y, width, height, color = colors.white, lineWidth = 1) {
 	ctx.strokeStyle = color;
 	ctx.lineWidth = lineWidth;
 	ctx.strokeRect(x, y, width, height);
-	ctx.strokeStyle = colors.default;
+	ctx.strokeStyle = colors.white;
 }
 
 
 export function drawImage(ctx, img, { x = 0, y = 0, scale = 1, xScale = 1, yScale = 1, forcedWidth = null, forcedHeight = null, fillStyle = null } = {}) {
 	const drawW = (forcedWidth === null ? (img?.width || 0) : forcedWidth) * scale * xScale;
 	const drawH = (forcedHeight === null ? (img?.height || 0) : forcedHeight) * scale * yScale;
-
-	ctx.imageSmoothingEnabled = false;
 
 	ctx.drawImage(img, x, y, drawW, drawH);
 
@@ -237,8 +235,9 @@ export function drawImage(ctx, img, { x = 0, y = 0, scale = 1, xScale = 1, yScal
 	}
 }
 
+
 export function drawCircle(
-	ctx, x, y, radius, color = colors.default, {
+	ctx, x, y, radius, color = colors.white, {
 		strokeColor = null,
 		lineWidth = 1,
 		fill = true,
@@ -261,8 +260,20 @@ export function drawCircle(
 		ctx.strokeStyle = strokeColor;
 		ctx.lineWidth = lineWidth;
 		ctx.stroke();
-		ctx.strokeStyle = colors.default; // reset to default for consistency
+		ctx.strokeStyle = colors.white; // reset to default for consistency
 	}
 
+	ctx.restore();
+}
+
+
+export function drawCircleBorder(ctx, x, y, radius, color = colors.white, lineWidth = 1, { startAngle = 0, endAngle = Math.PI * 2, anticlockwise = false } = {}) {
+	ctx.save();
+	ctx.beginPath();
+	ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+	ctx.strokeStyle = color;
+	ctx.lineWidth = lineWidth;
+	ctx.stroke();
+	ctx.strokeStyle = colors.white;
 	ctx.restore();
 }

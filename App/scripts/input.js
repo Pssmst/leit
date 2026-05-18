@@ -9,7 +9,9 @@ import * as aud				from './audio/audio.js';
 import * as render			from './canvas/render.js';
 import * as textures		from './ui/textures.js';
 import * as init			from './init.js';
+import * as songUI			from './ui/song.js';
 import * as discography		from './discography.js';
+import * as debug			from './canvas/mainCanvas/debug.js';
 
 // Return mouse position in canvas CSS-pixel coordinates
 function toCanvasCoords(event) {
@@ -22,53 +24,106 @@ function toCanvasCoords(event) {
 	state.pos.trackCanvas.y = event.clientY - trackCanvasRect.top;
 }
 
-export function registerInput() {
-	function pause() {
-		aud.pauseMusic();
-		HTML.playButton.style.display = "inline-grid";
-		HTML.pauseButton.style.display = "none";
-	}
+function pause() {
+	aud.pauseMusic();
+	HTML.playButton.style.display = "inline-grid";
+	HTML.pauseButton.style.display = "none";
+}
 
-	function play() {
-		aud.resumeMusic();
-		HTML.pauseButton.style.display = "inline-grid";
-		HTML.playButton.style.display = "none";
-	}
+function play() {
+	aud.resumeMusic();
+	HTML.pauseButton.style.display = "inline-grid";
+	HTML.playButton.style.display = "none";
+}
 
-	function setPanelWidth(n) {
-		if (n < (cnv.canvas.width / 3) - (layout.infoDiv.paddingHorizontal * 2) && n > 228) {
-			layout.infoDiv.width = n;
-			document.documentElement.style.setProperty("--value-info-width", `${layout.infoDiv.width}px`);
+// Checks if cursor is within canvas bounds (in CSS pixels) but not over info/timeline
+function determineCursorInCanvas() {
+	const canvasRect = cnv.canvas.getBoundingClientRect();
+	const infoRect = HTML.infoDiv.getBoundingClientRect();
+	const timelineRect = HTML.timelineDiv.getBoundingClientRect();
+	const editButtonRect = HTML.editButton.getBoundingClientRect();
+
+	// Convert the canvas-local CSS point to page coordinates for overlap tests
+	const pageX = canvasRect.left + state.pos.mainCanvas.x;
+	const pageY = canvasRect.top + state.pos.mainCanvas.y;
+
+	const off = layout.infoDiv.leftHitboxWidth/2;
+
+	const in_canvas =		(pageX >= canvasRect.left		&& pageX <= canvasRect.right	 && pageY >= canvasRect.top		&& pageY <= canvasRect.bottom);
+	const in_info =			(pageX >= infoRect.left - off	&& pageX <= infoRect.right		 && pageY >= infoRect.top		&& pageY <= infoRect.bottom);
+	const in_timeline =		(pageX >= timelineRect.left 	&& pageX <= timelineRect.right	 && pageY >= timelineRect.top	&& pageY <= timelineRect.bottom);
+	const in_editButton =	(pageX >= editButtonRect.left	&& pageX <= editButtonRect.right && pageY >= editButtonRect.top	&& pageY <= editButtonRect.bottom);
+
+	return in_canvas && !in_info && !in_timeline && !in_editButton && !HTML.bigCoverOverlay.classList.contains('active');
+}
+
+// Checks if cursor is within a song box's hitbox
+function getSongInCollidedHitbox() {
+	// Iterate through dictionary values
+	for (const song of Object.values(discography.songsDict)) {
+		const w = song.projectedWidth;
+		const h = song.projectedHeight || w;
+		if (state.pos.mainCanvas.x >= song.x && state.pos.mainCanvas.x <= song.x + w && state.pos.mainCanvas.y >= song.y && state.pos.mainCanvas.y <= song.y + h) {
+			return song;
 		}
 	}
+	return null;
+}
 
+async function toggleEditMode() {
+	const longDescription = document.getElementById('data-contents-longDescription');
+	if (state.edit.editMode) {
+		state.edit.editMode = false;
+		HTML.editButton.classList.remove('activated');
+		document.body.classList.remove('edit-mode');
+
+		if (!state.firstLoad) {
+			longDescription.contentEditable = 'false';
+			songUI.saveSongEdits(state.selectedSong);
+		}
+	}
+	else {
+		state.edit.editMode = true;
+		HTML.editButton.classList.add('activated');
+		document.body.classList.add('edit-mode');
+
+		if (!state.firstLoad) {
+			longDescription.contentEditable = 'true';
+		}
+	}
+	if (!state.firstLoad) {
+		await songUI.buildSongUI(state.selectedSong);
+	}
+}
+
+// Trigger the Electron file picker
+async function triggerFilePicker() {
+	state.edit.placingSong = true;
+	const leitFilePath = await window.electron.pickFile(state.edit.parentDiscographyFileName);
+	
+	if (leitFilePath) {
+		discography.addSong(leitFilePath);
+	}
+	state.edit.placingSong = false;
+}
+
+
+export function registerInput() {
 	window.addEventListener("keydown", async event => {
+		const target = event.target;
 		state.debug.lastKeyPressed = event.code; // Update last key code
 
+		// Check if the target is an input or contenteditable
+		if (target.closest('[contenteditable="true"], [contenteditable=""], input, textarea')) return;
+
+		// Iterate through debug options and apply input checks
+		for (const d of debug.DEBUG_ORDER) {
+			if (event.code === d.hotkey) {
+				state.debug.visuals[d.key] = !state.debug.visuals[d.key];
+			}
+		}
+
 		switch (event.code) {
-			// Debug keys
-			case "Digit1":
-				state.debug.visuals[0] = !state.debug.visuals[0];
-				break;
-			case "Digit2":
-				state.debug.visuals[1] = !state.debug.visuals[1];
-				break;
-			case "Digit3":
-				state.debug.visuals[2] = !state.debug.visuals[2];
-				break;
-			case "Digit4":
-				state.debug.visuals[3] = !state.debug.visuals[3];
-				break;
-			case "Digit5":
-				state.debug.visuals[4] = !state.debug.visuals[4];
-				break;
-			case "Digit6":
-				state.debug.visuals[5] = !state.debug.visuals[5];
-				break;
-			case "Digit7":
-				state.debug.visuals[6] = !state.debug.visuals[6];
-				break;
-			
 			// Pause
 			case "Space":
 				if (aud.isPlaybackPaused()) play();
@@ -83,24 +138,29 @@ export function registerInput() {
 				aud.setElapsed(state.audio.elapsed + 3);
 				break;
 
+			case "ArrowUp":
+				debug.handleTerminalScroll('ArrowUp');
+				break;
+			case "ArrowDown":
+				debug.handleTerminalScroll('ArrowDown');
+				break;
+
 			// Previous and next song
 			case "KeyA":
-				init.playNextSong(state.selectedSong, -1, state.audio.shuffle);
+				songUI.playNextSong(state.selectedSong, -1, state.audio.shuffle);
 				break;
 			case "KeyD":
-				init.playNextSong(state.selectedSong, 1, state.audio.shuffle);
+				songUI.playNextSong(state.selectedSong, 1, state.audio.shuffle);
 				break;
 
 			// Scramble motif colors 
 			case "KeyZ":
-				motifRegistry.scrambleMotifColors(init.motifs);
+				motifRegistry.scrambleMotifColors(discography.motifs);
 				break;
-			
 			// Compress motifs 
 			case "KeyC":
 				state.trackCanvas.frame.motifPanel.compressMotifs = !state.trackCanvas.frame.motifPanel.compressMotifs;
 				break;
-			
 			// Change motif height in track timeline (not panel) 
 			case "Minus":
 				layout.trackCanvas.frame.timeline.motifHeight--;
@@ -109,13 +169,24 @@ export function registerInput() {
 				layout.trackCanvas.frame.timeline.motifHeight++;
 				break;
 			
+			// Edit mode
+			case "KeyE":
+				toggleEditMode();
+				break;
+
+			// Delete discography
+			case "Delete":
+				discography.resetDiscography();
+				break;
+			
+			// Download discography data
 			case "Backquote":
 				function exportDiscography() {
 					const data = {
 						discography: discography.albums
 					};
 
-					const json = JSON.stringify(data, null, 4);
+					const json = JSON.stringify(data);
 					const blob = new Blob([json], { type: "application/json" });
 
 					const url = URL.createObjectURL(blob);
@@ -139,16 +210,16 @@ export function registerInput() {
 	});
 
 	window.addEventListener('wheel', event => {
-		if (state.hovering.mainCanvas) { 
+		// Vertical canvas scroll
+		if (state.hovering.debug) {
+			debug.handleTerminalScroll(event.deltaY.toFixed(0) > 0 ? 'ArrowDown' : 'ArrowUp');
+		}
+		else if (state.hovering.mainCanvas && discography.albums.length > 0) { 
 			state.dragging.pos.y -= (event.deltaY / 2).toFixed(0);
 		}
-
+		// Motif panel scroll
 		if (state.hovering.motifPanel.self && state.trackCanvas.frame.motifPanel.scrollbarNeeded) {
 			layout.trackCanvas.frame.motifPanel.scrollOffset -= (event.deltaY / 4).toFixed(0);
-		}
-
-		if (state.hovering.debug) {
-			state.debug.offsetDebugLines -= event.deltaY.toFixed(0);
 		}
 	});
 
@@ -156,35 +227,37 @@ export function registerInput() {
 		toCanvasCoords(event);
 
 		// Move the camera if dragging
-		if (state.dragging.mainCanvas) {
+		if (state.dragging.mainCanvas && discography.albums.length > 0) {
 			state.dragging.pos.x = state.dragging.pos.initialX + state.pos.mainCanvas.x - state.pos.mainCanvas.clickX;
 			state.dragging.pos.y = state.dragging.pos.initialY + state.pos.mainCanvas.y - state.pos.mainCanvas.clickY;
 		}
 
-		state.hovering.mainCanvas = init.determineCursorInCanvas();
+		state.hovering.debug = state.pos.mainCanvas.y < (Math.min(state.debug.terminalTotalLines, debug.getTerminalVisibleLines()) + 1) * state.font.size.default;
+
+		state.hovering.mainCanvas = determineCursorInCanvas();
 
 		// Check hitbox
-		const newHovered = init.getSongInCollidedHitbox();
-		cnv.canvas.style.cursor = newHovered ? 'pointer' : 'auto';
+		const newHovered = getSongInCollidedHitbox();
+		cnv.canvas.style.cursor = (newHovered || state.hovering.addSongContainer) ? 'pointer' : 'auto';
 
-		// Are we entering a different song? (only treat as "enter" when newHovered exists and is different)
 		const enteringSong = (
 			newHovered &&
 			!(state.hoveredSong === newHovered ||
-			(state.hoveredSong && newHovered && state.hoveredSong.songPath === newHovered.songPath))
+			(state.hoveredSong && newHovered && state.hoveredSong.path === newHovered.path))
 		);
 
 		if (enteringSong) {
-			init.loadSongWithThresholdCheck(newHovered);
+			songUI.loadSongWithThresholdCheck(newHovered);
 		}
-		state.hoveredSong = newHovered; // Update state.hoveredSong for next state.debug.frame
+
+		state.hoveredSong = newHovered;
 
 		// HTML.infoDiv changes width on left-side
 
 		const infoDivRect = HTML.infoDiv.getBoundingClientRect();
 		const x = event.clientX - infoDivRect.left;
 
-		state.hovering.infoDivLeftHitbox = (x >= -init.infoDivLeftHitboxWidth / 2 && x <= init.infoDivLeftHitboxWidth / 2);
+		state.hovering.infoDivLeftHitbox = (x >= -layout.infoDiv.leftHitboxWidth / 2 && x <= layout.infoDiv.leftHitboxWidth / 2);
 		
 		if (state.hovering.infoDivLeftHitbox || state.dragging.infoDiv) {
 			document.body.style.cursor = 'col-resize';
@@ -199,8 +272,24 @@ export function registerInput() {
 			HTML.infoDiv.classList.remove('resizable');
 		}
 
+		// INFO DIV DRAGGING
+
 		if (state.dragging.infoDiv) {
-			setPanelWidth(infoDivRect.right - event.clientX - layout.infoDiv.paddingHorizontal * 2);
+			const w = window.innerWidth - event.clientX - layout.infoDiv.paddingHorizontal * 2;
+			const collapseX = window.innerWidth - layout.infoDiv.collapseWidth;
+
+			// Collapse info panel 
+			if (event.clientX >= collapseX) {
+				layout.infoDiv.width = layout.infoDiv.minWidth;
+				HTML.infoDiv.classList.remove('active');
+			}
+			// Set info panel width
+			else {
+				layout.infoDiv.width = helpers.clamp(layout.infoDiv.minWidth, w, layout.infoDiv.maxWidth);
+				HTML.infoDiv.classList.add('active');
+			}
+
+			document.documentElement.style.setProperty("--value-info-width", `${layout.infoDiv.width}px`);
 			cnv.fitTrackCanvas();
 		}
 	});
@@ -220,46 +309,64 @@ export function registerInput() {
 		const infoDivRect = HTML.infoDiv.getBoundingClientRect();
 		const xInInfoDiv = event.clientX - infoDivRect.left;
 
-		state.hovering.infoDivLeftHitbox = (xInInfoDiv >= -init.infoDivLeftHitboxWidth/2 && xInInfoDiv <= init.infoDivLeftHitboxWidth/2);
+		state.hovering.infoDivLeftHitbox = (xInInfoDiv >= -layout.infoDiv.leftHitboxWidth/2 && xInInfoDiv <= layout.infoDiv.leftHitboxWidth/2);
 
+		// Left click
 		if (event.button === 0) {
+			// Start dragging info panel
 			if (state.hovering.infoDivLeftHitbox) {
-				event.preventDefault();
+				event.preventDefault(); 
 				state.dragging.infoDiv = true;
 			} 
-			else if (state.hovering.mainCanvas && !HTML.bigCoverOverlay.classList.contains('active')) {
-				if (state.hoveredSong === null) {
+			// Canvas selection
+			else if (state.hovering.mainCanvas && !state.edit.placingSong) {
+				if (state.hovering.addSongContainer && !state.edit.placingSong) {
+					triggerFilePicker();
+				}
+				else if (state.hoveredSong !== null) {
+					// Record which song was pressed; selection resolves on mouseup
+					state.pressedSong = state.hoveredSong;
+				}
+				else {
+					// Empty space; drag the canvas
 					state.dragging.mainCanvas = true;
 					state.dragging.pos.initialX = state.dragging.pos.x;
 					state.dragging.pos.initialY = state.dragging.pos.y;
 				}
-				else {
-					state.selectedSong = state.hoveredSong;
-					init.initSong(state.selectedSong);
-				}
-			}
-			else if (state.hovering.motifPanel.scrollbar) {
-
 			}
 		}
 	});
 
 	window.addEventListener('mouseup', event => {
-		// Release the drag
 		if (event.button === 0) {
 			state.dragging.mainCanvas = false;
 			state.dragging.infoDiv = false;
 
-			// Only applies if user is currently dragging the HTML.spinner of the timeline (so they can release anywhere on the window)
 			if (state.dragging.timelineSpinner && state.selectedSong && !state.loading) {
 				aud.setElapsed(state.audio.elapsedPercentInTime);
 				state.dragging.timelineSpinner = false;
 			}
-
 			if (state.dragging.volumeSpinner && state.selectedSong && !state.loading) {
 				state.audio.lastManualVolume = state.audio.volume;
 				state.dragging.volumeSpinner = false;
 			}
+
+			// Play song on mouseup
+			if (
+				state.hovering.mainCanvas && state.pressedSong !== null && state.hoveredSong !== null
+				&& (!state.edit.editMode || state.pressedSong === state.hoveredSong)
+				&& !state.edit.placingSong
+			) {
+				// Save edits on the current selected song before doing anything
+				if (state.edit.editMode) songUI.saveSongEdits(state.selectedSong);
+				
+				// If in edit mode, don't do the selection-storage thing
+				if (!state.edit.editMode) state.selectedSong = state.hoveredSong;
+				else state.selectedSong = state.pressedSong;
+				songUI.playSong(state.selectedSong);
+			}
+
+			state.pressedSong = null;
 		}
 	});
 
@@ -309,8 +416,8 @@ export function registerInput() {
 		}
 	});
 
-	HTML.backwardButton.addEventListener('click', () => init.playNextSong(state.selectedSong, -1, state.audio.shuffle));
-	HTML.forwardButton.addEventListener('click', () => init.playNextSong(state.selectedSong, 1, state.audio.shuffle));
+	HTML.backwardButton.addEventListener('click', () => songUI.playNextSong(state.selectedSong, -1, state.audio.shuffle));
+	HTML.forwardButton.addEventListener('click', () => songUI.playNextSong(state.selectedSong, 1, state.audio.shuffle));
 
 	HTML.pauseButton.addEventListener('click', () => pause() );
 	HTML.playButton.addEventListener('click', () => play() );
@@ -361,5 +468,11 @@ export function registerInput() {
 			state.audio.volume = 0;
 		}
 		aud.setVolume(state.audio.volume);
+	});
+
+	// EDIT EVENT LISTENERS
+
+	HTML.editButton.addEventListener('click', () => {
+		toggleEditMode();
 	});
 }

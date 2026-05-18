@@ -27,26 +27,6 @@ export function clamp(min, expression, max) {
 	return Math.max(Math.min(expression, max), min);
 }
 
-// Coverts "##:##:##" to seconds
-export function timestampToSeconds(timeStr) {
-	if (!timeStr) return 0;
-	const parts = timeStr.split(":").map(p => p.trim());
-	const nums = parts.map(n => parseInt(n, 10) || 0);
-
-	let seconds = 0;
-	if (nums.length === 3) {
-		seconds = nums[0] * 3600 + nums[1] * 60 + nums[2]; // hh:mm:ss
-	}
-	else if (nums.length === 2) {
-		seconds = nums[0] * 60 + nums[1]; // mm:ss
-	}
-	else if (nums.length === 1) {
-		seconds = nums[0]; // ss
-	}
-	return seconds;
-}
-
-
 // Do complicated stuff to shorten string if too long
 export function truncateString(ctx, string, maxWidth, font = state.font.default, fontSize = state.font.size.default, scaleX = 1) {
 	const scaledWidth = (s) => render.getTextWidth(ctx, s, font, fontSize) * scaleX;

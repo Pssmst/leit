@@ -17,10 +17,18 @@ export function HSVtoRGB(h, s, v) {
 // Get dominant colors of an image
 export async function getColorsFromImage(src, opts = {}) {
 	const cfg = {
-		maxSize: opts.maxSize || 300,		// Shrink large images for speed
-		colorBits: opts.colorBits || 4,		// Quantization bits per channel
-		sampleStep: opts.sampleStep || 1,	// Sample every Nth pixel
-		count: opts.count || 2
+		// The image is scaled down so its longest side is at most this many pixels before sampling
+		maxSize: opts.maxSize,
+
+		// Controls how coarsely RGB values are bucketed
+		// A value of 4 means each channel is reduced to 4 bits (16 levels)
+		quantizeBits: opts.quantizeBits || 4,
+
+		// Sample every Nth pixel
+		sampleStep: opts.sampleStep || 1,
+
+		// Number of output colors you want returned
+		count: opts.count || 2,
 	};
 
 	// load image
@@ -48,7 +56,7 @@ export async function getColorsFromImage(src, opts = {}) {
 	ctx.drawImage(img, 0, 0, w, h);
 
 	const data = ctx.getImageData(0, 0, w, h).data;
-	const shift = 8 - cfg.colorBits;
+	const shift = 8 - cfg.quantizeBits;
 	const buckets = new Map();
 	let total = 0;
 
@@ -60,7 +68,7 @@ export async function getColorsFromImage(src, opts = {}) {
 			const r = data[i] >> shift;
 			const g = data[i + 1] >> shift;
 			const b = data[i + 2] >> shift;
-			const key = (r << (cfg.colorBits * 2)) | (g << cfg.colorBits) | b;
+			const key = (r << (cfg.quantizeBits * 2)) | (g << cfg.quantizeBits) | b;
 			buckets.set(key, (buckets.get(key) || 0) + 1);
 			total++;
 		}
@@ -69,15 +77,15 @@ export async function getColorsFromImage(src, opts = {}) {
 	if (total === 0) return [];
 
 	const items = Array.from(buckets.entries()).map(([key, count]) => {
-		const mask = (1 << cfg.colorBits) - 1;
+		const mask = (1 << cfg.quantizeBits) - 1;
 		const b = key & mask;
-		const g = (key >> cfg.colorBits) & mask;
-		const r = (key >> (cfg.colorBits * 2)) & mask;
+		const g = (key >> cfg.quantizeBits) & mask;
+		const r = (key >> (cfg.quantizeBits * 2)) & mask;
 		return { r, g, b, count };
 	}).sort((a, b) => b.count - a.count);
 
 	function bucketToFull(v) {
-		const maxBucket = (1 << cfg.colorBits) - 1;
+		const maxBucket = (1 << cfg.quantizeBits) - 1;
 		return Math.round((v + 0.5) * 255 / (maxBucket + 1));
 	}
 	function colorDist(a, b) {
@@ -119,6 +127,15 @@ export async function getColorsFromImage(src, opts = {}) {
 	// SORT THE TOP COLORS BY BRIGHTNESS (brightest first)
 	top.sort((b,a) => b.brightness - a.brightness);
 	return top;
+}
+
+export function constructInfoGradient(song) {
+	let highlightBackgroundGradientText = `linear-gradient(145deg`;
+	for (let i = 0; i < song.colors.length; i++) {
+		highlightBackgroundGradientText += `, rgb(${song.colors[i].rgb}) ${i / song.colors.length * song.colors.length / (song.colors.length-1) * 100}%`;
+	}
+	highlightBackgroundGradientText += ')';
+	document.documentElement.style.setProperty('--color-highlight-gradient', highlightBackgroundGradientText);
 }
 
 // Gets the luminance of a color (percieved brightness)

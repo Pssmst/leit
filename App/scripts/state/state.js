@@ -1,6 +1,19 @@
 export const state = {
 	loading: false,
+	firstLoad: true,
+	
+	edit: {
+		editMode: false,
+		placingSong: false,
+		dataIndex: 0,
+		
+		parentDiscographyFileName: "base",
+		parentAlbumFileName: null,
+		parentDiscID: null,
+	},
+	
 	hoveredSong: null,
+	pressedSong: null,
 	selectedSong: null,
 
 	pos: {
@@ -24,6 +37,8 @@ export const state = {
 		infoDiv: false,
 		timelineSpinner: false,
 		volumeSpinner: false,
+		didMove: null,
+		songCandidate: null,
 
 		pos: {
 			x: null,
@@ -37,6 +52,7 @@ export const state = {
 		mainCanvas: false,
 		infoDivLeftHitbox: false,
 		debug: false,
+		addSongContainer: false,
 
 		motif: {
 			index: null,
@@ -114,12 +130,27 @@ export const state = {
 	debug: {
 		frame: 0,
 		fps: 0,
-
-		visuals: [true, false, false, false, false, false],
-
 		lastKeyPressed: null,
-		debugLines: 0,
-		offsetDebugLines: 0,
 		structureString: '',
+
+		terminalScrollOffset: 0,
+		terminalTotalLines: 0,
+
+		needsToScroll: null,
+
+		visuals: {
+			fps: true,
+			states: false,
+			colors: false,
+			layout: false,
+			audio: false,
+			showHitboxes: false,
+			motifPalette: false,
+		},
+	},
+
+	settings: {
+		howManyColorsToGetFromCover: 4,
+		canPreloadSongs: true,
 	}
 };

@@ -9,7 +9,7 @@ export class Motif {
 		{
 			occurrences = {},
 			origin = null,
-			color = colors.default,
+			color = colors.white,
 		} = {}
 	) {
 		this.name = name;
@@ -70,31 +70,31 @@ export const minVal = 30;
 export const maxVal = 100;
 
 function createHighlightHSV(h, s, v, intensity = 0.5) {
-    const vn = v / 100;
-    const sn = s / 100;
+	const vn = v / 100;
+	const sn = s / 100;
 
-    // Simplified version of the Photopic Vision curve
-    // Cyan (180) and Yellow (60) get higher weights.
-    const rad = (h * Math.PI) / 180;
-    const perceptualWeight = 0.7 + 0.3 * Math.cos(rad - (60 * Math.PI / 180));
+	// Simplified version of the Photopic Vision curve
+	// Cyan (180) and Yellow (60) get higher weights.
+	const rad = (h * Math.PI) / 180;
+	const perceptualWeight = 0.7 + 0.3 * Math.cos(rad - (60 * Math.PI / 180));
 
-    // Uses intensity to close the gap toward 100% Value
-    const vBoost = (1 - vn) * intensity;
-    const vOut = Math.min(1, vn + vBoost + (0.1 * intensity));
+	// Uses intensity to close the gap toward 100% Value
+	const vBoost = (1 - vn) * intensity;
+	const vOut = Math.min(1, vn + vBoost + (0.1 * intensity));
 
-    // If a color is already bright (high vn) or naturally sensitive (perceptualWeight), drop saturation to make it "look" brighter
-    const sCrush = sn * intensity * (vn * perceptualWeight);
-    const sOut = Math.max(0, sn - sCrush);
+	// If a color is already bright (high vn) or naturally sensitive (perceptualWeight), drop saturation to make it "look" brighter
+	const sCrush = sn * intensity * (vn * perceptualWeight);
+	const sOut = Math.max(0, sn - sCrush);
 
-    // Shifts slightly toward "light" (Yellow/White)
-    const hShift = 40 * intensity * (h > 60 && h < 240 ? -1 : 1);
-    const hOut = (h + hShift + 360) % 360;
+	// Shifts slightly toward "light" (Yellow/White)
+	const hShift = 40 * intensity * (h > 60 && h < 240 ? -1 : 1);
+	const hOut = (h + hShift + 360) % 360;
 
-    return [
-        Math.round(hOut),
-        Math.round(sOut * 100),
-        Math.round(vOut * 100)
-    ];
+	return [
+		Math.round(hOut),
+		Math.round(sOut * 100),
+		Math.round(vOut * 100)
+	];
 }
 
 export function createMotifColors(hue, sat, val) {

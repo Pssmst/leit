@@ -1,5 +1,9 @@
 export const layout = {
 	infoDiv: {
+		leftHitboxWidth: 10,
+		collapseWidth: 80,
+		minWidth: 228,
+		maxWidth: 600,
 		// width
 		// paddingHorizontal
 	},

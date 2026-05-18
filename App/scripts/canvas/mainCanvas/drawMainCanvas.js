@@ -10,18 +10,105 @@ import * as motifRegistry	from '../../motif.js';
 import * as aud				from '../../audio/audio.js';
 import * as render			from '../render.js';
 import * as textures		from '../../ui/textures.js';
-import * as discography		from '../../discography.js';
+import * as songUI			from '../../ui/song.js';
 import * as debug			from './debug.js';
+import * as discography		from '../../discography.js';
 
+function drawAddSongContainer(x, y, albumObj, discID, type = "square") {
+	const pos = state.pos.mainCanvas;
+
+	const sideLen = layout.mainCanvas.album.forcedDimension * layout.mainCanvas.album.scale;
+	const plusPadding = sideLen * .18;
+	const borderOffset = layout.mainCanvas.album.outlineOffset;
+
+	const circleX = x + sideLen / 2;
+	const circleY = y + sideLen / 2;
+	const radius = sideLen / 2 * 1.15;
+
+	const color = (HTML.bigCoverOverlay.classList.contains('active') ? colors.transparent : colors.albumText);
+	
+	// Draw container
+	if (type === "circle") {
+		render.drawCircle(cnv.ctx, x + sideLen / 2, y + sideLen / 2, radius, colors.edit.newSong);
+	}
+	else {
+		render.drawRect(cnv.ctx, x, y, sideLen, sideLen, colors.edit.newSong);
+	}
+	// Draw plus
+	render.drawLine(cnv.ctx, x + plusPadding, y + sideLen / 2, x + sideLen - plusPadding, y + sideLen / 2, colors.edit.newSongPlus, sideLen * .075);
+	render.drawLine(cnv.ctx, x + sideLen / 2, y + plusPadding, x + sideLen / 2, y + sideLen - plusPadding, colors.edit.newSongPlus, sideLen * .075);
+
+	// If hovering over addSongContainer
+	if (
+		(type === "circle") 
+			? Math.sqrt((pos.x - circleX)**2 + (pos.y - circleY)**2) <= radius
+			: (pos.x >= x) && (pos.x <= x + sideLen) && (pos.y >= y) && (pos.y <= y + sideLen)
+	) {
+		cnv.canvas.style.cursor = 'pointer';
+		state.hovering.addSongContainer = true;
+		
+		if (type === "circle") {
+			render.drawCircleBorder(cnv.ctx, circleX, circleY, radius + borderOffset, color, 2);
+		}
+		else {
+			render.drawBorder(cnv.ctx, x - borderOffset, y - borderOffset, sideLen + borderOffset * 2, sideLen + borderOffset * 2, color, 2);
+		}
+
+		// Set parent album to current album name
+		if (albumObj && !state.edit.placingSong) {
+			state.edit.parentAlbumFileName = albumObj.fileName;
+		}
+		// Set parent album to new album name, based on defaultAlbumName
+		else {
+			// Use the base default name without any trailing digits to avoid repeatedly appending numbers (which caused names like "Name0", "Name00", ...)
+			const baseDefaultName = ("Album").replace(/\d+$/, '');
+
+			let duplicateDefaultNames = true;
+			let newDefaultName = '';
+			let i = 1;
+
+			while (duplicateDefaultNames) {
+				duplicateDefaultNames = false;
+				newDefaultName = `${baseDefaultName} ${i}`;
+
+				// Check for any instance of the newDefaultName in albums
+				for (const album of discography.albums) {
+					if (album.fileName === newDefaultName) {
+						duplicateDefaultNames = true;
+						break;
+					}
+				}
+				i++;
+			}
+			if (!state.edit.placingSong) {
+				state.edit.parentAlbumFileName = newDefaultName;
+				state.edit.parentDiscID = 1;
+			}
+		}
+		if (!state.edit.placingSong) state.edit.parentDiscID = discID;
+	}
+}
 
 export function drawMainCanvas() {
 	cnv.ctx.clearRect(0, 0, cnv.canvas.width, cnv.canvas.height);
 	debug.calculateFPS();
-
+	
 	///////  ALBUMS  ////////////////////////////////////////////////////
 
 	let yOffset = 40;
-	let xOffset;
+	let xOffset = 0;
+
+	// Center plus at middle of screen
+	if (discography.albums.length === 0) {
+		state.dragging.pos.x = (window.innerWidth / 2) - yOffset;
+		state.dragging.pos.y = (window.innerHeight / 2) - 80;
+		//render.drawLine(cnv.ctx, window.innerWidth/2, 0, window.innerWidth/2, window.innerHeight);
+		//render.drawLine(cnv.ctx, 0, window.innerHeight/2, window.innerWidth, window.innerHeight/2);
+	}
+
+	const yIncrement = layout.mainCanvas.album.actualDimension + layout.mainCanvas.album.yGap;
+	state.hovering.addSongContainer = false;
+	state.hovering.songContainer = false;
 
 	// For rendering loaded songs
 	let audioCachePathList = [];
@@ -29,64 +116,115 @@ export function drawMainCanvas() {
 		audioCachePathList.push(bufferKey);
 	}
 
-	// Draw things for each song
-
 	for (const album of discography.albums) {
-		for (const disc of album.discs) {
-			xOffset = 20;
-			for (const song of disc.songs) {
+		// Draw title
+		render.drawText(cnv.ctx, album.fileName, {
+			x: state.dragging.pos.x,
+			y: yOffset + state.dragging.pos.y - state.font.size.default * 4.2,
+			fontSize: state.font.size.default * 1.8,
+			color: colors.albumText,
+		});
 
+		for (const disc of album.discs) {
+			xOffset = 0;
+
+			for (const song of disc.songs) {
+				if (!song) return;
+
+				// New image object rather than song.cover
+				const imgObject = textures.get(song.cover);
+				
 				// Assign song position for hitbox detection
 				song.x = xOffset + state.dragging.pos.x;
 				song.y = yOffset + state.dragging.pos.y;
-				
-				// Use forced width, otherwise fallback to natural image width
-				song.cover.projectedWidth =
-					(layout.mainCanvas.album.forcedDimension !== null)
-						? layout.mainCanvas.album.actualDimension
-					: (song.cover && song.cover.width)
-						? song.cover.width * layout.mainCanvas.album.scale
-					: 0;
+				const forcedDim = layout.mainCanvas.album.forcedDimension;
+				const currentScale = layout.mainCanvas.album.scale;
 
-				// Draw white border if that song is selected
-				if ((song === state.hoveredSong && state.hovering.mainCanvas) || song === state.selectedSong) {
+				// Use forced width, otherwise fallback to natural image width
+				song.projectedWidth = (forcedDim !== null) 
+					? layout.mainCanvas.album.actualDimension 
+					: (imgObject.width * currentScale);
+
+				// Draw song border based on whether it's being hovered, pressed, or currently playing
+				let borderColor = null;
+				if (state.hovering.mainCanvas && song === state.hoveredSong) {
+					borderColor = state.pressedSong ? colors.song.border.pressed : colors.song.border.hovered;
+				}
+				// Overrides hover/press
+				if (song === state.selectedSong) {
+					borderColor = colors.song.border.selected;
+				}
+
+				if (borderColor) {
 					render.drawBorder(
 						cnv.ctx,
-						song.x - layout.mainCanvas.album.outlineOffset, song.y - layout.mainCanvas.album.outlineOffset,
-						song.cover.projectedWidth + 2*layout.mainCanvas.album.outlineOffset, song.cover.projectedWidth + 2*layout.mainCanvas.album.outlineOffset,
-						(song === state.selectedSong ? colors.song.border.selected : (HTML.bigCoverOverlay.classList.contains('active') ? colors.transparent : colors.song.border.hover)),
-						2
+						song.x - layout.mainCanvas.album.outlineOffset,
+						song.y - layout.mainCanvas.album.outlineOffset,
+						song.projectedWidth + 2 * layout.mainCanvas.album.outlineOffset,
+						song.projectedWidth + 2 * layout.mainCanvas.album.outlineOffset,
+						borderColor, 2
 					);
 				}
 
 				// Draw album cover
-				render.drawImage(cnv.ctx, song.cover, {
+				render.drawImage(cnv.ctx, imgObject, {
 					x: song.x,
 					y: song.y,
-					scale: layout.mainCanvas.album.scale,
-					forcedWidth: layout.mainCanvas.album.forcedDimension,
-					forcedHeight: layout.mainCanvas.album.forcedDimension,
+					scale: currentScale,
+					forcedWidth: forcedDim,
+					forcedHeight: forcedDim,
 				});
 
 				// Draw little "loaded" indicators on songs to indicate loaded status
-				// Iterate through audiocache and songsDict
-				if (state.debug.visuals[4]) {
-					if (audioCachePathList.includes(song.songPath)) {
-						render.drawCircle(cnv.ctx, song.x + layout.mainCanvas.album.actualDimension / 10, song.y + layout.mainCanvas.album.actualDimension / 10, layout.mainCanvas.album.actualDimension / 8, colors.debug.loadedAudio.loaded, { strokeColor: colors.debug.loadedAudio.border });
+				if (state.debug.visuals.audio) {
+					if (audioCachePathList.includes(song.path)) {
+						render.drawCircle(
+							cnv.ctx,
+							song.x + layout.mainCanvas.album.actualDimension / 10,
+							song.y + layout.mainCanvas.album.actualDimension / 10,
+							layout.mainCanvas.album.actualDimension / 8,
+							colors.debug.loadedAudio.loaded,
+							{ strokeColor: colors.debug.loadedAudio.border }
+						);
 					}
 					else {
-						render.drawCircle(cnv.ctx, song.x + layout.mainCanvas.album.actualDimension / 10, song.y + layout.mainCanvas.album.actualDimension / 10, layout.mainCanvas.album.actualDimension / 8, colors.debug.loadedAudio.unloaded, { strokeColor: colors.debug.loadedAudio.border});
+						render.drawCircle(
+							cnv.ctx,
+							song.x + layout.mainCanvas.album.actualDimension / 10,
+							song.y + layout.mainCanvas.album.actualDimension / 10,
+							layout.mainCanvas.album.actualDimension / 8,
+							colors.debug.loadedAudio.unloaded,
+							{ strokeColor: colors.debug.loadedAudio.border}
+						);
 					}
 				}
 				
-				let nameStr = helpers.truncateString(cnv.ctx, song.preferredName, song.cover.projectedWidth);
+				let nameStr = helpers.truncateString(cnv.ctx, song.name, song.projectedWidth);
+				render.drawText(cnv.ctx, nameStr, {
+					x: song.x + (song.projectedWidth - render.getTextWidth(cnv.ctx, nameStr)) / 2,
+					y: song.y - state.font.size.default * 1.4 
+				});
 
-				render.drawText(cnv.ctx, nameStr, { x: xOffset + state.dragging.pos.x + (song.cover.projectedWidth - render.getTextWidth(cnv.ctx, nameStr)) / 2, y: yOffset + state.dragging.pos.y - state.font.size.default * 1.4 });
-				xOffset += (song.cover.projectedWidth + layout.mainCanvas.album.xGap);
+				xOffset += (song.projectedWidth + layout.mainCanvas.album.xGap);
 			}
-			yOffset += layout.mainCanvas.album.actualDimension + layout.mainCanvas.album.yGap;
+
+			// Draw addSongContainer at end of current disc
+			if (state.edit.editMode) drawAddSongContainer(xOffset + state.dragging.pos.x, yOffset + state.dragging.pos.y, album, disc.id);
+			yOffset += yIncrement;
 		}
-		yOffset += layout.mainCanvas.album.actualDimension + layout.mainCanvas.album.yGap;
+
+		// Draw addSongContainer at bottom of album
+		if (state.edit.editMode) {
+			drawAddSongContainer(state.dragging.pos.x, yOffset + state.dragging.pos.y, album, album.discs.length + 1);
+			yOffset += yIncrement;
+		}
+		yOffset += yIncrement;
+	}
+
+	// Draw addSongContainer at bottom of discography to add a new album (circle-shaped)
+	if (state.edit.editMode) drawAddSongContainer(state.dragging.pos.x, yOffset + state.dragging.pos.y, null, 1, "circle");
+	if (discography.albums.length > 0) {
+		yOffset += yIncrement;
 	}
 
 	///////  TIMELINE  ////////////////////////////////////////////////////
@@ -97,15 +235,15 @@ export function drawMainCanvas() {
 		state.audio.elapsed = Math.min(aud.getPlaybackTime(), state.selectedSong.duration); // Ask audio module what the current playback time is (respects pause)
 
 		// Load next song if the HTML.spinner is at least 1/4 of the way through the song
-		if (state.audio.elapsed >= 5 || state.audio.elapsed >= state.selectedSong.duration / 4) {
-			const loadedSongPrev = init.getNextSong(state.selectedSong, -1, 0);
-			const loadedSongNext = init.getNextSong(state.selectedSong, 1, 0);
+		if (state.settings.canPreloadSongs && state.audio.elapsed >= 5 || state.audio.elapsed >= state.selectedSong.duration / 4) {
+			const loadedSongPrev = songUI.getNextSong(state.selectedSong, -1, 0);
+			const loadedSongNext = songUI.getNextSong(state.selectedSong, 1, 0);
 
 			if (loadedSongPrev) {
-				aud.loadAudio(loadedSongPrev.songPath);
+				aud.loadAudio(loadedSongPrev.path);
 			}
 			if (loadedSongNext) {
-				aud.loadAudio(loadedSongNext.songPath);
+				aud.loadAudio(loadedSongNext.path);
 			}
 		}
 
@@ -192,7 +330,7 @@ export function drawMainCanvas() {
 				aud.setElapsed(0);
 			}
 			else {
-				init.playNextSong(state.selectedSong, 1, state.audio.shuffle);
+				songUI.playNextSong(state.selectedSong, 1, state.audio.shuffle);
 			}
 		}
 	}
@@ -216,7 +354,7 @@ export function drawMainCanvas() {
 			state.structure.currentStructInfo = state.selectedSong.structure[currentStructIndex][1];
 			
 			// Get resources to update state.font script variables using the current struct
-			state.structure.durations = init.getStructDurations(state.structure.currentStructInfo);
+			state.structure.durations = songUI.getStructDurations(state.structure.currentStructInfo);
 
 			// Get state.audio.elapsed info for the current structure entry
 			const currentStructElapsed = Math.max(0, state.audio.elapsed - state.structure.startTimesOfEachStruct[currentStructIndex]);
@@ -238,7 +376,7 @@ export function drawMainCanvas() {
 
 			// Determine how many measures there are after the last struct begins
 			const lastStructIndex = state.selectedSong.structure.length - 1;
-			const lastStructMeasureDuration = init.getStructDurations(state.selectedSong.structure[lastStructIndex][1]).durationOfMeasure;
+			const lastStructMeasureDuration = songUI.getStructDurations(state.selectedSong.structure[lastStructIndex][1]).durationOfMeasure;
 
 			// How many full measures since the last struct started
 			const secondsFromLastStructToSongEnd = Math.max(0, state.selectedSong.duration - (state.structure.startTimesOfEachStruct[lastStructIndex] || 0));
