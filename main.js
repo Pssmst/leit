@@ -12,14 +12,14 @@ function createWindow() {
 		height: 720,
 		minWidth: 250,
 		minHeight: 190,
-		icon: path.join(__dirname, 'App', 'assets', 'textures', 'icon.png'),
+		icon: path.join(__dirname, 'src', 'assets', 'textures', 'icon.png'),
 		webPreferences: {
 			contextIsolation: true,
 			preload: path.join(__dirname, 'preload.js')
 		}
 	});
 
-	win.loadFile(path.join(__dirname, 'App', 'index.html'));
+	win.loadFile(path.join(__dirname, 'src', 'index.html'));
 
 	// Handle F5 and F12 without a menu
 	win.webContents.on('before-input-event', (event, input) => {
@@ -46,6 +46,7 @@ protocol.registerSchemesAsPrivileged([
 			standard: true,			// Treat it like http/https
 			secure: true,			// Allow it to work with secure APIs
 			supportFetchAPI: true,	// Enables the use of fetch()
+    		corsEnabled: true,		// CORS protection
 			bypassCSP: true,		// Allows it to bypass Content Security Policy
 			stream: true			// Vfital for audio/video streaming
 		} 
@@ -60,7 +61,7 @@ app.whenReady().then(() => {
 			const decodedPath = decodeURIComponent(requestUrl.pathname).replace(/^\//, '');
 			
 			// Build the absolute path to the .leit file
-			const leitFilePath = path.join(__dirname, 'App', 'assets', 'data', decodedPath);
+			const leitFilePath = path.join(__dirname, 'src', 'assets', 'data', decodedPath);
 
 			// If the file doesn't exist, don't try to open it
 			if (!fs.existsSync(leitFilePath)) {
@@ -163,7 +164,7 @@ app.whenReady().then(() => {
 			const safeName = fileName.endsWith('.json') ? fileName : `${fileName}.json`;
 			
 			// Construct the full path using the filename passed from the UI
-			const jsonPath = path.join(__dirname, 'App', 'assets', 'discographies', safeName);
+			const jsonPath = path.join(__dirname, 'src', 'assets', 'discographies', safeName);
 			
 			fs.writeFileSync(jsonPath, JSON.stringify(data, null, 4), 'utf-8');
 			return { success: true };
@@ -177,7 +178,7 @@ app.whenReady().then(() => {
 	// Clears all data from assets for the current discography
 	ipcMain.handle('clearData', async (_event, discographyName) => {
 		try {
-			const coversDir = path.join(__dirname, 'App', 'assets', 'data', discographyName);
+			const coversDir = path.join(__dirname, 'src', 'assets', 'data', discographyName);
 			if (!fs.existsSync(coversDir)) {
 				return { success: true, deleted: 0 };
 			}
@@ -206,9 +207,9 @@ app.whenReady().then(() => {
 
 	ipcMain.handle('updateSongMetadata', async (event, mediaUrl, updatedFields) => {
 		try {
-			// Convert media://data/my_song.leit -> C:/.../App/assets/data/my_song.leit
+			// Convert media://data/my_song.leit -> C:/.../src/assets/data/my_song.leit
 			const relativePath = mediaUrl.replace('media://data/', '');
-			const fullPath = path.join(__dirname, 'App', 'assets', 'data', decodeURIComponent(relativePath));
+			const fullPath = path.join(__dirname, 'src', 'assets', 'data', decodeURIComponent(relativePath));
 
 			if (!fs.existsSync(fullPath)) {
 				throw new Error(`File not found: ${fullPath}`);
@@ -237,7 +238,7 @@ app.whenReady().then(() => {
 			const relativePath = mediaUrl
 				.replace('media://data/', '')
 				.split('?')[0]; // strip any query params
-			const fullPath = path.join(__dirname, 'App', 'assets', 'data', decodeURIComponent(relativePath));
+			const fullPath = path.join(__dirname, 'src', 'assets', 'data', decodeURIComponent(relativePath));
 
 			if (!fs.existsSync(fullPath)) throw new Error(`File not found: ${fullPath}`);
 

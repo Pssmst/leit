@@ -14,8 +14,6 @@ async function main() {
 		requestAnimationFrame(animate);
 	}
 	requestAnimationFrame(animate);
-
 	registerInput();
 }
-
 main();

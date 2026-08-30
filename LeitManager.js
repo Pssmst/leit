@@ -60,7 +60,7 @@ class LeitManager {
 		const leitFileName = `${finalBaseName}.leit`;
 
 		// Prepare the destination folder
-		const dataFolder = path.join(__dirname, 'App', 'assets', 'data', discographyName);
+		const dataFolder = path.join(__dirname, 'src', 'assets', 'data', discographyName);
 		if (!fs.existsSync(dataFolder)) {
 			fs.mkdirSync(dataFolder, { recursive: true });
 		}

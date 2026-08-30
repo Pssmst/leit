@@ -20,7 +20,7 @@ const getRandomDelay = () => {
 
 const audioFileTypes = [".mp3", ".wav", ".aac", ".ogg", ".flac"]; // Allowed audio file types
 
-export default function App() {
+export default function src() {
   const [songs, setSongs] = React.useState([]);
   const [uploading, setUploading] = React.useState(false);
   const [progress, setProgress] = React.useState(0);

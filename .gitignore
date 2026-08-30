@@ -3,14 +3,14 @@
 Thumbs.db
 
 # Ignore all files inside data and discographies
-App/assets/data/*
-!App/assets/data/.gitkeep
-App/assets/discographies/*
-!App/assets/discographies/.gitkeep
+src/assets/data/*
+!src/assets/data/.gitkeep
+src/assets/discographies/*
+!src/assets/discographies/.gitkeep
 
 # Ignore covers
-App/assets/textures/covers/*
-!App/assets/textures/covers/unknown.png
+src/assets/textures/covers/*
+!src/assets/textures/covers/unknown.png
 
 # Electron crappy crap
 node_modules/

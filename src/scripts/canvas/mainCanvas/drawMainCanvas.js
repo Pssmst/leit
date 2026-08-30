@@ -147,11 +147,14 @@ export function drawMainCanvas() {
 
 				// Draw song border based on whether it's being hovered, pressed, or currently playing
 				let borderColor = null;
-				if (state.hovering.mainCanvas && song === state.hoveredSong) {
+				if (state.dragging.song === song) {
+					borderColor = colors.song.border.pressed;
+				}
+				else if (state.hovering.mainCanvas && song === state.hoveredSong) {
 					borderColor = state.pressedSong ? colors.song.border.pressed : colors.song.border.hovered;
 				}
 				// Overrides hover/press
-				if (song === state.selectedSong) {
+				if (song === state.selectedSong && state.dragging.song !== song) {
 					borderColor = colors.song.border.selected;
 				}
 

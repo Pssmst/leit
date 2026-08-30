@@ -53,6 +53,7 @@ export function newElement(
 	} = {}
 ) {
 	const element = document.createElement(tag);
+	
 	// Basic attributes
 	if (id != null) element.id = id;
 	if (href != null) element.href = href;

@@ -13,7 +13,7 @@ import * as textures		from './textures.js';
 import * as discography		from '../discography.js';
 
 // Load audio only if the time threshold allows
-// This is my fix for crazy lag when rapidly hovering over multiple songs
+// This is my fix for crazy lag when rapidly moving between multiple songs
 export function loadSongWithThresholdCheck(song) {
 	if (!state.settings.canPreloadSongs) return;
 	aud.resetClock();

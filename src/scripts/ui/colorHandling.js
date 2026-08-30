@@ -155,4 +155,3 @@ export function getContrast(rgb1, rgb2) {
 	const darker  = Math.min(L1, L2);
 	return (lighter + 0.05) / (darker + 0.05);
 }
-

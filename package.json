@@ -1,5 +1,8 @@
 {
 	"main": "main.js",
+	"name": "leit-app",
+	"version": "0.1.0",
+	"author": "pssmst",
 	"scripts": {
 		"start": "electron .",
 		"build": "electron-builder"
@@ -8,17 +11,18 @@
 		"appId": "com.pssmst.leit",
 		"productName": "Leit",
 		"win": {
-			"icon": "App/assets/textures/icon/icon.ico"
+			"icon": "src/assets/textures/icon/icon.ico"
 		},
 		"mac": {
-			"icon": "App/assets/textures/icon/icon.icns"
+			"icon": "src/assets/textures/icon/icon.icns"
 		},
 		"linux": {
-			"icon": "App/assets/textures/icon/icon.png"
+			"icon": "src/assets/textures/icon/icon.png"
 		}
 	},
 	"dependencies": {
-		"adm-zip": "^0.5.16",
+		"adm-zip": "^0.6.0",
+		"electron": "^43.2.0",
 		"music-metadata": "^11.11.2"
 	}
 }

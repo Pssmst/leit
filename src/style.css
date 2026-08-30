@@ -268,9 +268,10 @@ canvas:focus {
 }
 .plus-sign {
 	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	height: 100%;
+	width: 100%;
+	
+	transform: translateY(-100%);
 
 	font-size: 40px;
 	opacity: 0;
@@ -878,6 +879,7 @@ body.edit-mode #info-cover:hover .plus-sign {
 	border: 1px solid rgb(71, 71, 71);
 	z-index: 2000;
 	border-radius: 6px;
+	border-top-left-radius: 0;
 }
 #context-menu ul {
 	list-style: none;

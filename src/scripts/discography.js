@@ -42,7 +42,7 @@ export class Song {
 		}
 		// Legacy fallback
 		else if (!this.path) {
-			this.path = `../App/assets/Music/${this.parentAlbumFileName}/${this.fileName}.wav`;
+			this.path = `../src/assets/Music/${this.parentAlbumFileName}/${this.fileName}.wav`;
 			this.cover = null;
 		}
 	}
@@ -132,6 +132,50 @@ export function getDisc(albumName, id) {
 	if (!album) return null;
 	// Cast id to Number to ensure it matches the integer assigned in update()
 	return album.discs.find(disc => disc.id == id) || null;
+}
+
+// Reorder a song within a disc and save changes
+export async function reorderSongInDisc(song, newIndex) {
+	const disc = getDisc(song.parentAlbumFileName, song.id.parentDisc);
+	if (!disc) return;
+
+	const currentIndex = disc.songs.indexOf(song);
+	if (currentIndex === -1 || currentIndex === newIndex) return;
+
+	// Clamp new index to valid range
+	newIndex = Math.max(0, Math.min(newIndex, disc.songs.length - 1));
+
+	// Songs array is already reordered by mousemove handler
+	// Just save to JSON
+	const currentJsonFile = `${state.edit.parentDiscographyFileName}.json`;
+	const currentJsonPath = `./assets/discographies/${currentJsonFile}`;
+
+	try {
+		const response = await fetch(currentJsonPath);
+		const data = await response.json();
+
+		// Find and update the album and disc in the JSON
+		const jsonAlbum = data.discography.find(a => a.fileName === song.parentAlbumFileName);
+		if (jsonAlbum) {
+			// Find the disc by ID (disc.id is 1-indexed)
+			const jsonDisc = jsonAlbum.discs[song.id.parentDisc - 1];
+			if (jsonDisc) {
+				// Update the songs array with the new order from the in-memory disc
+				jsonDisc.songs = disc.songs.map(s => s.path);
+			}
+		}
+
+		const saveResult = await window.electron.saveDiscography(currentJsonFile, data);
+		if (saveResult.success) {
+			// Reload to ensure consistency
+			albums.length = 0;
+			Object.keys(songsDict).forEach(key => delete songsDict[key]);
+			await constructDiscographyFromJSON(currentJsonPath);
+		}
+	}
+	catch (err) {
+		console.error('Failed to reorder song:', err);
+	}
 }
 
 

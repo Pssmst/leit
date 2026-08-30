@@ -278,7 +278,7 @@ export function registerInput() {
 			const w = window.innerWidth - event.clientX - layout.infoDiv.paddingHorizontal * 2;
 			const collapseX = window.innerWidth - layout.infoDiv.collapseWidth;
 
-			// Collapse info panel 
+			// Collapse info panel
 			if (event.clientX >= collapseX) {
 				layout.infoDiv.width = layout.infoDiv.minWidth;
 				HTML.infoDiv.classList.remove('active');
@@ -291,6 +291,30 @@ export function registerInput() {
 
 			document.documentElement.style.setProperty("--value-info-width", `${layout.infoDiv.width}px`);
 			cnv.fitTrackCanvas();
+		}
+
+		// SONG DRAGGING IN EDIT MODE
+
+		if (state.dragging.song && state.edit.editMode) {
+			const disc = discography.getDisc(state.dragging.song.parentAlbumFileName, state.dragging.song.id.parentDisc);
+			if (disc) {
+				const song = state.dragging.song;
+				const songWidth = layout.mainCanvas.album.actualDimension;
+				const xGap = layout.mainCanvas.album.xGap;
+				const itemWidth = songWidth + xGap;
+
+				// Calculate which position the song should be at based on x position
+				const relativeX = state.pos.mainCanvas.x - state.dragging.pos.x - layout.mainCanvas.album.forcedDimension;
+				let newIndex = Math.round(relativeX / itemWidth);
+				newIndex = Math.max(0, Math.min(newIndex, disc.songs.length - 1));
+
+				const currentIndex = disc.songs.indexOf(song);
+				if (currentIndex !== -1 && currentIndex !== newIndex) {
+					// Reorder in the array
+					disc.songs.splice(currentIndex, 1);
+					disc.songs.splice(newIndex, 0, song);
+				}
+			}
 		}
 	});
 
@@ -324,8 +348,17 @@ export function registerInput() {
 					triggerFilePicker();
 				}
 				else if (state.hoveredSong !== null) {
-					// Record which song was pressed; selection resolves on mouseup
+					// Record the pressed song for selection
 					state.pressedSong = state.hoveredSong;
+
+					// In edit mode: also prepare to drag the song
+					if (state.edit.editMode) {
+						state.dragging.song = state.hoveredSong;
+						const disc = discography.getDisc(state.hoveredSong.parentAlbumFileName, state.hoveredSong.id.parentDisc);
+						if (disc) {
+							state.dragging.songStartIndex = disc.songs.indexOf(state.hoveredSong);
+						}
+					}
 				}
 				else {
 					// Empty space; drag the canvas
@@ -342,6 +375,20 @@ export function registerInput() {
 			state.dragging.mainCanvas = false;
 			state.dragging.infoDiv = false;
 
+			// Finalize song dragging in edit mode
+			let songWasMoved = false;
+			if (state.dragging.song && state.edit.editMode) {
+				const song = state.dragging.song;
+				const newIndex = discography.getDisc(song.parentAlbumFileName, song.id.parentDisc).songs.indexOf(song);
+				if (newIndex !== -1 && newIndex !== state.dragging.songStartIndex) {
+					// Song was reordered, save changes
+					songWasMoved = true;
+					discography.reorderSongInDisc(song, newIndex);
+				}
+				state.dragging.song = null;
+				state.dragging.songStartIndex = null;
+			}
+
 			if (state.dragging.timelineSpinner && state.selectedSong && !state.loading) {
 				aud.setElapsed(state.audio.elapsedPercentInTime);
 				state.dragging.timelineSpinner = false;
@@ -351,15 +398,15 @@ export function registerInput() {
 				state.dragging.volumeSpinner = false;
 			}
 
-			// Play song on mouseup
-			if (
+			// Play song on mouseup (only if not moved during drag)
+			if (!songWasMoved &&
 				state.hovering.mainCanvas && state.pressedSong !== null && state.hoveredSong !== null
 				&& (!state.edit.editMode || state.pressedSong === state.hoveredSong)
 				&& !state.edit.placingSong
 			) {
 				// Save edits on the current selected song before doing anything
 				if (state.edit.editMode) songUI.saveSongEdits(state.selectedSong);
-				
+
 				// If in edit mode, don't do the selection-storage thing
 				if (!state.edit.editMode) state.selectedSong = state.hoveredSong;
 				else state.selectedSong = state.pressedSong;

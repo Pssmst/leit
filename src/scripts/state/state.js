@@ -39,6 +39,8 @@ export const state = {
 		volumeSpinner: false,
 		didMove: null,
 		songCandidate: null,
+		song: null,
+		songStartIndex: null,
 
 		pos: {
 			x: null,

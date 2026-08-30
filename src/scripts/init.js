@@ -17,7 +17,7 @@ export function initMain() {
 	window.audioContext = audioContext;
 
 	// Initialize discography
-	const jsonPath = `../App/assets/discographies/${state.edit.parentDiscographyFileName}.json`;
+	const jsonPath = `../src/assets/discographies/${state.edit.parentDiscographyFileName}.json`;
 	discography.constructDiscographyFromJSON(jsonPath);
 
 	// Initialize import progress

@@ -108,7 +108,7 @@ export function drawRect(
 		shadow = true;
 	}
 
-	// Helper: convert a color string (hex, rgb(), rgba()) to an rgba(...) string with alpha 0
+	// Cnverts a color string (hex, rgb(), rgba()) to an rgba(...) string with alpha 0
 	function transparentize(col) {
 		col = (col || '').trim();
 		if (col.startsWith('rgba')) {
@@ -128,7 +128,6 @@ export function drawRect(
 			const b = parseInt(hex.slice(4,6), 16);
 			return `rgba(${r},${g},${b},0)`;
 		}
-		// fallback
 		return 'rgba(0,0,0,0)';
 	}
 
@@ -151,16 +150,16 @@ export function drawRect(
 	if (shadow && inner) {
 		ctx.save();
 
-		// draw base fill first
+		// Draw base fill first
 		ctx.fillStyle = color;
 		ctx.fillRect(x, y, width, height);
 
-		// clip to rect so gradients stay inside
+		// Clip to rect so gradients stay inside
 		ctx.beginPath();
 		ctx.rect(x, y, width, height);
 		ctx.clip();
 
-		// prepare gradient edge colors
+		// Prepare gradient edge colors
 		const innerTransparent = transparentize(shadowColor);
 
 		if (shadowBlur > 0) {
@@ -260,7 +259,7 @@ export function drawCircle(
 		ctx.strokeStyle = strokeColor;
 		ctx.lineWidth = lineWidth;
 		ctx.stroke();
-		ctx.strokeStyle = colors.white; // reset to default for consistency
+		ctx.strokeStyle = colors.white;
 	}
 
 	ctx.restore();
